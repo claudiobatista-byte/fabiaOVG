@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centro de Idosos Sagrada Família - CISF</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --rosa: #D94A9E;
+            --roxo: #6B4C9A;
+            --amarelo: #F0C944;
+            --azul-escuro: #2C3E50;
+            --cinza-claro: #F8FAFB;
+            --cinza-border: #E8EAED;
+            --branco: #FFFFFF;
+            --shadow-soft: 0 2px 12px rgba(0,0,0,0.08);
+            --shadow-medium: 0 8px 24px rgba(0,0,0,0.12);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, #F8FAFB 0%, #FFFFFF 100%);
+            color: var(--azul-escuro);
+            line-height: 1.6;
+        }
+
+        /* ========== HEADER ========== */
+        header {
+            background: linear-gradient(135deg, var(--roxo) 0%, var(--rosa) 50%, var(--roxo) 100%);
+            color: var(--branco);
+            padding: 1.5rem 0;
+            box-shadow: var(--shadow-medium);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-top {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-image {
+            height: 48px;
+            width: auto;
+            filter: brightness(0) invert(1);
+        }
+
+        .logo-text h1 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-text p {
+            font-size: 0.75rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        /* ========== TABS ========== */
+        .tabs-container {
+            display: flex;
+            gap: 0;
+            border-top: 1px solid rgba(255,255,255,0.15);
+            margin-top: 1.5rem;
+            padding: 0;
+            overflow-x: auto;
+            width: 100%;
+        }
+
+        .tab-btn {
+            padding: 16px 24px;
+            border: none;
+            background: transparent;
+            color: rgba(255,255,255,0.7);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border-bottom: 3px solid transparent;
+            transition: var(--transition);
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .tab-btn:hover {
+            color: var(--branco);
+            background: rgba(255,255,255,0.05);
+        }
+
+        .tab-btn.active {
+            color: var(--amarelo);
+            border-bottom-color: var(--amarelo);
+            background: rgba(255,255,255,0.05);
+        }
+
+        /* ========== CONTENT ========== */
+        .content-wrapper {
+            max-width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease;
+            min-height: calc(100vh - 200px);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .iframe-container {
+            width: 100%;
+            height: calc(100vh - 180px);
+            border: none;
+            border-radius: 0;
+            background: white;
+        }
+
+        /* ========== ABA 1: ANÁLISE EPIDEMIOLÓGICA ========== */
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, var(--roxo) 0%, var(--rosa) 100%);
+            color: var(--branco);
+            padding: 4rem 2rem;
+            text-align: center;
+            border-radius: 0 0 24px 24px;
+            margin-bottom: 3rem;
+        }
+
+        .hero-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .hero-section p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+            max-width: 600px;
+            margin: 0 auto 1.5rem;
+        }
+
+        .hero-meta {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            font-size: 0.95rem;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255,255,255,0.15);
+            padding: 0.75rem 1.25rem;
+            border-radius: 20px;
+        }
+
+        section {
+            padding: 4rem 0;
+            border-bottom: 1px solid var(--cinza-border);
+        }
+
+        section:last-of-type {
+            border-bottom: none;
+        }
+
+        .section-header {
+            margin-bottom: 3rem;
+            text-align: left;
+        }
+
+        .section-header h2 {
+            font-size: 2.2rem;
+            color: var(--roxo);
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .section-header p {
+            color: #666;
+            font-size: 1.05rem;
+            line-height: 1.7;
+        }
+
+        .accent-bar {
+            width: 60px;
+            height: 5px;
+            background: linear-gradient(90deg, var(--rosa) 0%, var(--amarelo) 100%);
+            margin: 1rem 0;
+            border-radius: 3px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .card {
+            background: var(--branco);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--shadow-soft);
+            transition: var(--transition);
+            border: none;
+            border-top: 4px solid var(--rosa);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: -30px;
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, rgba(217,74,158,0.08), transparent);
+            border-radius: 50%;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .card h3 {
+            color: var(--roxo);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card p {
+            color: #555;
+            line-height: 1.8;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, rgba(217,74,158,0.08) 0%, rgba(107,76,154,0.05) 100%);
+            border-left: 4px solid var(--rosa);
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--rosa);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+            margin-top: 2rem;
+        }
+
+        .pillar {
+            background: var(--branco);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--amarelo);
+            box-shadow: var(--shadow-soft);
+            transition: var(--transition);
+        }
+
+        .pillar:hover {
+            transform: translateX(8px);
+        }
+
+        .pillar-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--rosa), var(--roxo));
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .pillar-title {
+            font-weight: 600;
+            color: var(--roxo);
+            margin-bottom: 0.5rem;
+        }
+
+        .pillar-desc {
+            font-size: 0.95rem;
+            color: #666;
+        }
+
+        .gender-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .gender-card {
+            background: var(--branco);
+            padding: 2.5rem;
+            text-align: center;
+            border-radius: 12px;
+            box-shadow: var(--shadow-soft);
+            border-top: 4px solid var(--amarelo);
+            transition: var(--transition);
+        }
+
+        .gender-card:hover {
+            box-shadow: var(--shadow-medium);
+            transform: translateY(-4px);
+        }
+
+        .gender-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .gender-percentage {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--rosa);
+            margin-bottom: 0.5rem;
+        }
+
+        .gender-count {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .ratio-badge {
+            background: linear-gradient(135deg, var(--rosa), var(--roxo));
+            color: white;
+            padding: 1.5rem;
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin: 2rem auto;
+            font-size: 0.95rem;
+            text-align: center;
+            box-shadow: var(--shadow-medium);
+        }
+
+        .factor-tag {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--roxo), var(--rosa));
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin: 0.5rem 0.5rem 0.5rem 0;
+            transition: var(--transition);
+        }
+
+        .factor-tag:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(217,74,158,0.25);
+        }
+
+        .timeline {
+            position: relative;
+            margin: 2rem 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 3px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--rosa), var(--amarelo));
+            top: 0;
+        }
+
+        .timeline-item {
+            margin-bottom: 2rem;
+            width: 48%;
+        }
+
+        .timeline-item:nth-child(odd) {
+            margin-left: 0;
+            text-align: right;
+            padding-right: 2rem;
+        }
+
+        .timeline-item:nth-child(even) {
+            margin-left: 52%;
+            padding-left: 2rem;
+        }
+
+        .timeline-content {
+            background: var(--branco);
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: var(--shadow-soft);
+            border-top: 3px solid var(--rosa);
+        }
+
+        .timeline-year {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--rosa);
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-title {
+            color: var(--roxo);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .quarterly-chart {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .quarter-card {
+            background: var(--branco);
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: var(--shadow-soft);
+            border-top: 4px solid var(--amarelo);
+            transition: var(--transition);
+        }
+
+        .quarter-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .quarter-label {
+            font-weight: 600;
+            color: var(--roxo);
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .quarter-percentage {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--rosa);
+        }
+
+        .quarter-alert {
+            background: linear-gradient(135deg, #FF6B6B, #FF8787);
+            color: white;
+            font-weight: 600;
+            padding: 0.35rem 0.8rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            margin-top: 0.75rem;
+            display: inline-block;
+        }
+
+        .triggers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .trigger-card {
+            background: linear-gradient(135deg, rgba(255,107,107,0.08) 0%, rgba(255,107,107,0.02) 100%);
+            border-left: 4px solid #FF6B6B;
+            padding: 2rem;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        .trigger-card:hover {
+            transform: translateY(-4px);
+            border-left-color: var(--rosa);
+        }
+
+        .trigger-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--roxo);
+            margin-bottom: 0.5rem;
+        }
+
+        .trigger-percentage {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #FF6B6B;
+            margin-bottom: 1rem;
+        }
+
+        .roots-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .root-card {
+            background: var(--branco);
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: var(--shadow-soft);
+            text-align: center;
+            border-top: 3px solid var(--roxo);
+            transition: var(--transition);
+        }
+
+        .root-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .root-condition {
+            font-size: 0.95rem;
+            color: var(--roxo);
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .root-percentage {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--rosa);
+        }
+
+        .matrix-container {
+            background: var(--branco);
+            padding: 2rem;
+            border-radius: 8px;
+            margin-top: 2rem;
+            overflow-x: auto;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .matrix-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+
+        .matrix-table th, .matrix-table td {
+            padding: 1.25rem;
+            text-align: left;
+            border-bottom: 1px solid var(--cinza-border);
+        }
+
+        .matrix-table th {
+            background: linear-gradient(135deg, var(--roxo), var(--rosa));
+            color: white;
+            font-weight: 600;
+        }
+
+        .matrix-table tr:hover {
+            background: rgba(217,74,158,0.05);
+        }
+
+        .syndromes-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .syndrome-box {
+            background: linear-gradient(135deg, var(--roxo), var(--rosa));
+            color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow-medium);
+            transition: var(--transition);
+        }
+
+        .syndrome-box:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(217,74,158,0.3);
+        }
+
+        .syndrome-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .syndrome-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--amarelo);
+        }
+
+        .syndrome-desc {
+            line-height: 1.8;
+            font-size: 0.95rem;
+        }
+
+        .protocols-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .protocol-card {
+            background: linear-gradient(135deg, var(--roxo), var(--rosa));
+            color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: var(--shadow-medium);
+            transition: var(--transition);
+        }
+
+        .protocol-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 16px 40px rgba(217,74,158,0.3);
+        }
+
+        .protocol-number {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: var(--amarelo);
+            margin-bottom: 0.5rem;
+        }
+
+        .protocol-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .protocol-focus {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        .protocol-detail {
+            background: var(--branco);
+            padding: 2rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-soft);
+            border-top: 4px solid var(--rosa);
+        }
+
+        .protocol-detail h3 {
+            color: var(--roxo);
+            margin-bottom: 1rem;
+            font-size: 1.4rem;
+        }
+
+        .tactic-item {
+            background: linear-gradient(135deg, rgba(217,74,158,0.08) 0%, rgba(240,201,68,0.05) 100%);
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--rosa);
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+
+        .tactic-item:hover {
+            border-left-color: var(--amarelo);
+            transform: translateX(4px);
+        }
+
+        .tactic-title {
+            font-weight: 700;
+            color: var(--roxo);
+            margin-bottom: 0.5rem;
+        }
+
+        .conclusion {
+            background: linear-gradient(135deg, var(--roxo) 0%, var(--rosa) 100%);
+            color: white;
+            padding: 3rem 2rem;
+            border-radius: 12px;
+            text-align: center;
+            margin-top: 2rem;
+            box-shadow: var(--shadow-medium);
+        }
+
+        .conclusion h3 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+        }
+
+        .conclusion p {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .conclusion-highlight {
+            background: rgba(240,201,68,0.2);
+            border-left: 4px solid var(--amarelo);
+            padding: 1.5rem;
+            border-radius: 4px;
+            margin-top: 1.5rem;
+            color: var(--amarelo);
+            font-weight: 500;
+        }
+
+        /* ========== RESPONSIVE ========== */
+
+        @media (max-width: 768px) {
+            .header-top {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .logo-text h1 {
+                font-size: 1.1rem;
+            }
+
+            .hero-section h2 {
+                font-size: 1.8rem;
+            }
+
+            .section-header h2 {
+                font-size: 1.6rem;
+            }
+
+            .two-column, .gender-grid, .syndromes-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .timeline-item {
+                width: 100%;
+                padding-left: 60px !important;
+                padding-right: 0 !important;
+                text-align: left !important;
+            }
+
+            .timeline::before {
+                left: 20px;
+            }
+
+            .quarterly-chart {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 0 1rem;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .protocols-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tab-btn {
+                padding: 12px 16px;
+                font-size: 0.85rem;
+            }
+
+            .hero-meta {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .meta-item {
+                flex: 1;
+                justify-content: center;
+            }
+
+            .iframe-container {
+                height: calc(100vh - 160px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header>
+        <div class="header-top">
+            <div class="logo-section">
+                <svg class="logo-image" viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="30" fill="white" opacity="0.3"/>
+                    <circle cx="70" cy="50" r="35" fill="white" opacity="0.2"/>
+                    <circle cx="90" cy="50" r="25" fill="white" opacity="0.3"/>
+                    <path d="M 120 30 Q 140 40 135 50 Q 140 60 120 70" stroke="white" stroke-width="4" fill="none" stroke-linecap="round"/>
+                </svg>
+                <div class="logo-text">
+                    <h1>Centro de Idosos<br>Sagrada Família</h1>
+                    <p>CISF — Vigilância & Cuidado Integrado</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="tabs-container">
+            <button class="tab-btn active" data-tab="analise">
+                <i class="fas fa-chart-line"></i> Análise Epidemiológica
+            </button>
+            <button class="tab-btn" data-tab="painel">
+                <i class="fas fa-hospital-user"></i> Painel de Monitoramento
+            </button>
+            <button class="tab-btn" data-tab="boletim">
+                <i class="fas fa-file-medical"></i> Boletim Epidemiológico
+            </button>
+        </div>
+    </header>
+
+    <div class="content-wrapper">
+
+        <!-- ========== ABA 1: ANÁLISE EPIDEMIOLÓGICA ========== -->
+        <div id="analise" class="tab-content active">
+            <div class="hero-section">
+                <h2>Análise Epidemiológica 2020–2026</h2>
+                <p>Transformando dados em proteção — vigilância epidemiológica como ferramenta de gestão do cuidado</p>
+                <div class="hero-meta">
+                    <div class="meta-item">📊 69 Registros Analisados</div>
+                    <div class="meta-item">📅 Março 2020 – Janeiro 2026</div>
+                    <div class="meta-item">🏥 Centro de Idosos Sagrada Família</div>
+                </div>
+            </div>
+
+            <main style="padding: 3rem 0 0 0;">
+
+                <!-- FILOSOFIA -->
+                <section>
+                    <div class="container">
+                        <div class="section-header">
+                            <h2>A Filosofia do Nosso Cuidado</h2>
+                            <div class="accent-bar"></div>
+                        </div>
+
+                        <div class="two-column">
+                            <div>
+                                <h3 style="color: var(--roxo); margin-bottom: 1rem; font-size: 1.2rem;">Por que analisamos a mortalidade em nossa ILPI?</h3>
+                                <p style="color: #555; margin-bottom: 1rem; line-height: 1.8;">A vigilância epidemiológica não é apenas uma exigência técnica; é a nossa principal ferramenta de gestão do cuidado.</p>
+                                <p style="color: #555; line-height: 1.8;">Cada dado registrado é um mapa que revela padrões invisíveis, permitindo-nos avaliar o impacto de crises e subsidiar ações de promoção da vida.</p>
+                            </div>
+
+                            <div>
+                                <div class="pillar">
+                                    <div class="pillar-number">1</div>
+                                    <div class="pillar-title">Identificar Padrões</div>
+                                    <div class="pillar-desc">Compreender a morbimortalidade de uma população vulnerável</div>
+                                </div>
+                                <div class="pillar">
+                                    <div class="pillar-number">2</div>
+                                    <div class="pillar-title">Avaliar Impactos</div>
+                                    <div class="pillar-desc">Mensurar os efeitos de eventos extremos, como a pandemia de COVID-19</div>
+                                </div>
+                                <div class="pillar">
+                                    <div class="pillar-number">3</div>
+                                    <div class="pillar-title">Agir Preventivamente</div>
+                                    <div class="pillar-desc">Traduzir estatísticas em barreiras de proteção ativas</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- DEMOGRAFIA -->
+                <section>
+                    <div class="container">
+                        <div class="section-header">
+                            <h2>O Perfil Demográfico da Vulnerabilidade</h2>
+                            <div class="accent-bar"></div>
+                            <p>A análise de 69 registros ao longo de seis anos revela um perfil claro de extrema fragilidade</p>
+                        </div>
+
+                        <div class="two-column">
+                            <div>
+                                <h3 style="color: var(--roxo); margin-bottom: 1.5rem;">Zona de Risco Máximo</h3>
+                                <div class="stat-box">
+                                    <strong style="color: var(--rosa);">43,5% dos óbitos</strong> concentram-se na faixa de <strong>80 a 89 anos</strong> (30 casos).
+                                </div>
+                                
+                                <div class="stat-box">
+                                    <strong>Idade Média:</strong> 81,7 anos (variando de 62 a 101 anos).
+                                </div>
+
+                                <div class="stat-box">
+                                    <strong>Extremos Etários:</strong> 10,1% entre 60–69 anos | 2,9% em centenários
+                                </div>
+                            </div>
+
+                            <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                                <div style="text-align: center;">
+                                    <div style="font-size: 3rem; font-weight: 700; color: var(--rosa); margin-bottom: 0.5rem;">69</div>
+                                    <div style="color: #666; font-size: 0.95rem;">Vidas Mapeadas<br>Mar/2020 – Jan/2026</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- GÊNERO -->
+                <section>
+                    <div class="container">
+                        <div class="section-header">
+                            <h2>O Paradoxo de Gênero</h2>
+                            <div class="accent-bar"></div>
+                        </div>
+
+                        <div class="gender-grid">
+                            <div class="gender-card">
+                                <div class="gender-icon">♂️</div>
+                                <div class="gender-percentage">58,0%</div>
+                                <div class="gender-count">(40 óbitos)</div>
+                            </div>
+                            <div class="gender-card">
+                                <div class="gender-icon">♀️</div>
+                                <div class="gender-percentage">42,0%</div>
+                                <div class="gender-count">(29 óbitos)</div>
+                            </div>
+                        </div>
+
+                        <div class="ratio-badge">
+                            Razão: 1,38<br/><small>(Homens para cada Mulher)</small>
+                        </div>
+
+                        <div style="background: var(--branco); padding: 2rem; border-radius: 12px; box-shadow: var(--shadow-soft); margin-top: 2rem;">
+                            <p style="margin-bottom: 1rem;"><strong>Por que os homens são mais vulneráveis aqui?</strong></p>
+                            <p style="color: #666; margin-bottom: 1.5rem;">Na literatura geral, as mulheres apresentam maior longevidade. No entanto, a predominância masculina em nossa ILPI aponta para fatores de risco históricos:</p>
+                            <div>
+                                <div class="factor-tag">Maior prevalência de tabagismo prévio</div>
+                                <div class="factor-tag">Doenças Pulmonares Obstrutivas Crônicas</div>
+                                <div class="factor-tag">Neoplasias mais frequentes</div>
+                                <div class="factor-tag">Menor adesão a cuidados preventivos</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TIMELINE -->
+                <section>
+                    <div class="container">
+                        <div class="section-header">
+                            <h2>A Linha do Tempo Institucional (2020–2026)</h2>
+                            <div class="accent-bar"></div>
+                        </div>
+
+                        <div class="timeline">
+                            <div class="timeline-item">
+                                <div class="timeline-content">
+                                    <div class="timeline-year">2020</div>
+                                    <div class="timeline-title">O Choque</div>
+                                    <p><strong>19 óbitos (27,5%)</strong>. Pico pandêmico. 52,6% com menção a COVID-19.</p>
+                                </div>
+                            </div>
+
+                            <div class="timeline-item">
+                                <div class="timeline-content">
+                                    <div class="timeline-year">2021</div>
+                                    <div class="timeline-title">O Controle</div>
+                                    <p>Queda drástica para <strong>4 óbitos (5,8%)</strong>. Reflexo da vacinação e blindagem institucional.</p>
+                                </div>
+                            </div>
+
+                            <div class="timeline-item">
+                                <div class="timeline-content">
+                                    <div class="timeline-year">2022–2025</div>
+                                    <div class="timeline-title">A Estabilização</div>
+                                    <p>Média estável entre 9 e 13 óbitos anuais. <strong>Zero COVID-19</strong> neste período.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- RISCO SAZONAL -->
+                <section>
+                    <div class="container">
+                        <div class="section-header">
+                            <h2>O Relatório Sazonal do Risco</h2>
+                            <div class="accent-bar"></div>
+                        </div>
+
+                        <div class="two-column">
+                            <div class="quarterly-chart">
+                                <div class="quarter-card">
+                                    <div class="quarter-label">1º Trimestre (Jan–Mar)</div>
+                                    <div class="quarter-percentage">21,7%</div>
+                                    <div style="font-size: 0.85rem; color: #666;">15 óbitos</div>
+                                </div>
+
+                                <div class="quarter-card">
+                                    <div class="quarter-label">2º Trimestre (Abr–Jun)</div>
+                                    <div class="quarter-percentage">11,6%</div>
+                                    <div style="font-size: 0.85rem; color: #666;">8 óbitos — Menor risco</div>
+                                </div>
+
+                                <div class="quarter-card">
+                                    <div class="quarter-label">3º Trimestre (Jul–Set)</div>
+                                    <div class="quarter-percentage">39,1%</div>
+                                    <div style="font-size: 0.85rem; color: #666;">27 óbitos</div>
+                                    <div class="quarter-alert">⚠️ ALERTA MÁXIMO</div>
+                                </div>
+
+                                <div class="quarter-card">
+                                    <div class="quarter-label">4º Trimestre (Out–Dez)</div>
+                                    <div class="quarter-percentage">27,5%</div>
+                                    <div style="font-size: 0.85rem; color: #666;">19 óbitos</div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="stat-box">
+                                    <p><strong>Concentração Crítica:</strong> O 3º e 4º trimestres concentram <strong>66,6%</strong> de todos os óbitos, exigindo preparação focada em infecções respiratórias.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- GATILHOS -->
+                <section>
+                    <div class="container">
+                        <div class="section-header">
+                            <h2>Os Gatilhos Agudos de Mortalidade</h2>
+                            <div class="accent-bar"></div>
+                        </div>
+
+                        <div class="triggers-grid">
+                            <div class="trigger-card">
+                                <div class="trigger-title">Sepse / Choque Séptico</div>
+                                <div class="trigger-percentage">46,4%</div>
+                                <p style="color: #555; font-size: 0.9rem; margin-top: 0.5rem;">32 menções — Condição final mais letal, exigindo detecção ultra-precoce.</p>
+                            </div>
+
+                            <div class="trigger-card">
+                                <div class="trigger-title">Pneumonia</div>
+                                <div class="trigger-percentage">40,6%</div>
+                                <p style="color: #555; font-size: 0.9rem; margin-top: 0.5rem;">28 menções — Principal infecção invasiva, ligada à sazonalidade.</p>
+                            </div>
+
+                            <div class="trigger-card">
+                                <div class="trigger-title">Insuficiência Respiratória</div>
+                                <div class="trigger-percentage">30,4%</div>
+                                <p style="color: #555; font-size: 0.9rem; margin-top: 0.5rem;">21 menções — Colapso mecânico dos fatores anteriores.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TERRENO CRÔNICO -->
+                <section>
+                    <div class="container">
+                        <div class="section-header">
+                            <h2>O Terreno Crônico</h2>
+                            <div class="accent-bar"></div>
+                        </div>
+
+                        <div style="background: linear-gradient(135deg, rgba(217,74,158,0.1), rgba(107,76,154,0.08)); padding: 2rem; border-radius: 12px; margin-bottom: 2rem;">
+                            <p style="color: var(--roxo); line-height: 1.8;">Os eventos agudos são apenas a ponta do iceberg. A verdadeira vulnerabilidade nasce do acúmulo de condições crônicas que minam a resiliência do idoso.</p>
+                        </div>
+
+                        <div class="roots-grid">
+                            <div class="root-card">
+                                <div class="root-condition">Hipertensão Arterial</div>
+                                <div class="root-percentage">26,1%</div>
+                            </div>
+                            <div class="root-card">
+                                <div class="root-condition">Demência / Alzheimer</div>
+                                <div class="root-percentage">24,6%</div>
+                            </div>
+                            <div class="root-card">
+                                <div class="root-condition">Insuficiência Cardíaca</div>
+                                <div class="root-percentage">17,4%</div>
+                            </div>
+                            <div class="root-card">
+                                <div class="root-condition">Doença Renal Crônica</div>
+                                <div class="root-percentage">15,9%</div>
+                            </div>
+                            <div class="root-card">
+                                <div class="root-condition">DPOC / Enfisema</div>
+                                <div class="root-percentage">13,0%</div>
+                            </div>
+                            <div class="root-card">
+                                <div class="root-condition">Diabetes Mellitus</div>
+                                <div class="root-percentage">10,1%</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SÍNDROMES -->
+                <section>
+                    <div class="container">
+                        <div class="section-header">
+                            <h2>O Foco Silencioso: Síndromes Geriátricas</h2>
+                            <div class="accent-bar"></div>
+                        </div>
+
+                        <div class="syndromes-grid">
+                            <div class="syndrome-box">
+                                <div class="syndrome-icon">🔍</div>
+                                <div class="syndrome-title">Desnutrição & Caquexia (10,1%)</div>
+                                <div class="syndrome-desc">
+                                    A perda de massa magra não é apenas estética; é a perda do "motor" imunológico. Essencial em pacientes com demência que perdem capacidade de se alimentar.
+                                </div>
+                            </div>
+
+                            <div class="syndrome-box">
+                                <div class="syndrome-icon">🏥</div>
+                                <div class="syndrome-title">Síndrome de Imobilidade (5,8%)</div>
+                                <div class="syndrome-desc">
+                                    O confinamento ao leito gera declínio pulmonar, lesões por pressão e perda de autonomia — efeito dominó mortal.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- PROTOCOLOS -->
+                <section>
+                    <div class="container">
+                        <div class="section-header">
+                            <h2>Ativando o Escudo: Dos Dados aos Protocolos</h2>
+                            <div class="accent-bar"></div>
+                        </div>
+
+                        <div style="background: linear-gradient(135deg, rgba(217,74,158,0.1), rgba(240,201,68,0.1)); padding: 2rem; border-radius: 12px; margin-bottom: 2rem; text-align: center;">
+                            <p style="color: var(--roxo); font-weight: 500; line-height: 1.8;">Com base no mapeamento epidemiológico 2020–2026, as recomendações do Ministério da Saúde e SBGG foram traduzidas em três frentes táticas de defesa institucional.</p>
+                        </div>
+
+                        <div class="protocols-grid">
+                            <div class="protocol-card">
+                                <div class="protocol-number">1</div>
+                                <div class="protocol-name">Blindagem Sazonal</div>
+                                <div class="protocol-focus">Foco no 3º Trimestre</div>
+                            </div>
+                            <div class="protocol-card">
+                                <div class="protocol-number">2</div>
+                                <div class="protocol-name">Sentinelas contra Infecção</div>
+                                <div class="protocol-focus">Foco na Sepse/Pneumonia</div>
+                            </div>
+                            <div class="protocol-card">
+                                <div class="protocol-number">3</div>
+                                <div class="protocol-name">Dignidade e Integração</div>
+                                <div class="protocol-focus">Foco nas Demências</div>
+                            </div>
+                        </div>
+
+                        <div class="protocol-detail">
+                            <h3>🛡️ Protocolo 1: A Blindagem Sazonal e Respiratória</h3>
+                            <p style="margin-bottom: 1rem; color: #666;"><em>Preparação antecipada para o 3º Trimestre (Julho a Setembro)</em></p>
+                            <div class="tactic-item">
+                                <div class="tactic-title">💉 Barreira Imunológica</div>
+                                <div style="color: #666; margin-top: 0.5rem;">Vacinação 100% atualizada antes de Junho (Influenza, COVID-19 bivalente, Pneumococo).</div>
+                            </div>
+                            <div class="tactic-item">
+                                <div class="tactic-title">🧼 Vigilância Ambiental</div>
+                                <div style="color: #666; margin-top: 0.5rem;">Reforço extremo em higiene, ventilação e EPIs durante meses de frio com monitoramento SESMT.</div>
+                            </div>
+                            <div class="tactic-item">
+                                <div class="tactic-title">🚪 Triagem de Visitantes</div>
+                                <div style="color: #666; margin-top: 0.5rem;">Controle rigoroso para indivíduos com sintomas respiratórios durante outono e inverno.</div>
+                            </div>
+                        </div>
+
+                        <div class="protocol-detail">
+                            <h3>🎯 Protocolo 2: Sentinelas Contra a Sepse</h3>
+                            <p style="margin-bottom: 1rem; color: #666;"><em>Interceptando a infecção antes do choque séptico (46,4% dos óbitos)</em></p>
+                            <div class="tactic-item">
+                                <div class="tactic-title">👁️ Observação Básica</div>
+                                <div style="color: #666; margin-top: 0.5rem;">Monitoramento diário de confusão mental aguda, recusa alimentar ou letargia repentina.</div>
+                            </div>
+                            <div class="tactic-item">
+                                <div class="tactic-title">⚡ Ação Rápida</div>
+                                <div style="color: #666; margin-top: 0.5rem;">Avaliação imediata de focos primários (trato urinário, pulmões, pele/lesões).</div>
+                            </div>
+                            <div class="tactic-item">
+                                <div class="tactic-title">💊 Intervenção</div>
+                                <div style="color: #666; margin-top: 0.5rem;">Adequação precoce e precisa de antibioticoterapia ao primeiro sinal de infecção sistêmica.</div>
+                            </div>
+                        </div>
+
+                        <div class="protocol-detail">
+                            <h3>❤️ Protocolo 3: A Dignidade do Cuidado Integrado</h3>
+                            <p style="margin-bottom: 1rem; color: #666;"><em>Suporte focado em síndromes demenciais (24,6%) e fragilidade extrema</em></p>
+                            <div class="tactic-item">
+                                <div class="tactic-title">🍽️ Segurança Nutricional</div>
+                                <div style="color: #666; margin-top: 0.5rem;">Monitoramento contínuo com meta: Zero bronchoaspiração e reversão de caquexia.</div>
+                            </div>
+                            <div class="tactic-item">
+                                <div class="tactic-title">🚶 Proteção da Mobilidade</div>
+                                <div style="color: #666; margin-top: 0.5rem;">Fisioterapia motora e mudança rigorosa de decúbito para combater Síndrome de Imobilidade.</div>
+                            </div>
+                            <div class="tactic-item">
+                                <div class="tactic-title">🕊️ Cuidados Paliativos</div>
+                                <div style="color: #666; margin-top: 0.5rem;">Programa integrado honrando diretivas antecipadas com conforto máximo ao final da vida.</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- CONCLUSÃO -->
+                <section>
+                    <div class="container">
+                        <div class="conclusion">
+                            <h3>A Vigilância como Ato de Amor</h3>
+                            <p>Atrás de cada número deste relatório (2020–2026), existe uma história que honramos. <strong>Mapeamos 69 perdas não para registrar o passado, mas para iluminar o futuro.</strong></p>
+                            <div class="conclusion-highlight">
+                                ✨ <strong>Ao implementarmos vacinação rigorosa, detecção precoce de sepse e cuidado nutricional compassivo, transformamos a epidemiologia em um escudo ativo.</strong>
+                            </div>
+                            <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.2); font-size: 0.85rem; letter-spacing: 1px;">
+                                CENTRO DE IDOSOS SAGRADA FAMÍLIA • DADOS QUE PROTEGEM • CUIDADO QUE DIGNIFICA
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </main>
+        </div>
+
+        <!-- ========== ABA 2: PAINEL DE MONITORAMENTO ========== -->
+        <div id="painel" class="tab-content">
+            <iframe src="painel.html" class="iframe-container" title="Painel de Monitoramento"></iframe>
+        </div>
+
+        <!-- ========== ABA 3: BOLETIM EPIDEMIOLÓGICO ========== -->
+        <div id="boletim" class="tab-content">
+            <iframe src="boletim.html" class="iframe-container" title="Boletim Epidemiológico"></iframe>
+        </div>
+
+    </div>
+
+    <script>
+        // SISTEMA DE ABAS
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const tabName = this.getAttribute('data-tab');
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                this.classList.add('active');
+                document.getElementById(tabName).classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

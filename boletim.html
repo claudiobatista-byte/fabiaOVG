@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Boletim Epidemiológico — CISF</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI', 'Roboto', sans-serif;background:#f5f7fc;color:#2c3e50}
+.container{max-width:1400px;margin:0 auto;padding:16px}
+
+/* EXPORT CONTROL */
+.no-export{display:none!important}
+@media print{
+  .no-export{display:none!important}
+  .toolbar{display:none!important}
+  .tabs-container{display:none!important}
+}
+
+/* TABS */
+.tabs-container{display:flex;gap:8px;margin-bottom:24px;border-bottom:2px solid #ecf0f1;background:#fff;border-radius:12px 12px 0 0;padding:12px;box-shadow:0 2px 8px rgba(0,0,0,.08);flex-wrap:wrap}
+.tab-btn{padding:12px 20px;border:none;background:transparent;cursor:pointer;font-weight:600;color:#7f8c8d;border-bottom:3px solid transparent;transition:all 0.3s;font-size:14px;position:relative;top:2px;display:inline-flex;align-items:center;gap:8px}
+.tab-btn.active{color:#0f3460;border-bottom-color:#0f3460}
+.tab-btn:hover{color:#0f3460}
+.tab-content{display:none}
+.tab-content.active{display:block}
+
+/* HEADER */
+.header-premium{background:linear-gradient(135deg,#0f3460 0%,#16498c 50%,#003b8f 100%);color:#fff;padding:40px;border-radius:20px;margin-bottom:24px;box-shadow:0 8px 24px rgba(15,52,96,.2);position:relative;overflow:hidden}
+.header-premium::before{content:'';position:absolute;right:-80px;top:-80px;width:300px;height:300px;background:rgba(255,255,255,.05);border-radius:50%;z-index:1}
+.header-content{position:relative;z-index:2;display:grid;grid-template-columns:1fr auto;gap:40px;align-items:center}
+.header-title h1{font-size:48px;font-weight:700;margin-bottom:4px;letter-spacing:-1px}
+.header-title .subtitle{font-size:16px;color:#b3d9ff;font-weight:300}
+.header-date{text-align:right;font-size:14px;color:#b3d9ff;line-height:1.8}
+.header-date .date-value{font-size:20px;font-weight:600;color:#fff;display:block}
+
+/* TOOLBAR */
+.toolbar{display:flex;gap:10px;margin-bottom:24px;justify-content:flex-end;flex-wrap:wrap}
+.btn-export{padding:12px 20px;border:none;border-radius:10px;font-weight:600;cursor:pointer;transition:all 0.3s;font-size:14px;display:inline-flex;align-items:center;gap:8px}
+.btn-export.pdf{background:#d32f2f;color:#fff}
+.btn-export.pdf:hover{background:#b71c1c;box-shadow:0 4px 12px rgba(211,47,47,.3)}
+.btn-export.png{background:#1976d2;color:#fff}
+.btn-export.png:hover{background:#1565c0;box-shadow:0 4px 12px rgba(25,118,210,.3)}
+.btn-export:hover{background:#229954;box-shadow:0 4px 12px rgba(39,174,96,.3)}
+
+/* STATS CARDS GRID */
+.stats-overview{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:32px}
+.stat-card{background:#fff;border-radius:16px;padding:24px;box-shadow:0 2px 8px rgba(0,0,0,.08);border-left:5px solid #0f3460;transition:transform 0.3s,box-shadow 0.3s}
+.stat-card:hover{transform:translateY(-4px);box-shadow:0 8px 20px rgba(0,0,0,.12)}
+.stat-card.green{border-left-color:#27ae60}
+.stat-card.brown{border-left-color:#d68910}
+.stat-card.red{border-left-color:#d32f2f}
+.stat-card.blue{border-left-color:#1976d2}
+.stat-label{font-size:12px;font-weight:600;color:#7f8c8d;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.stat-value{font-size:42px;font-weight:700;color:#2c3e50;margin-bottom:4px}
+.stat-pct{font-size:14px;font-weight:600}
+.stat-pct.green{color:#27ae60}
+.stat-pct.brown{color:#d68910}
+.stat-pct.red{color:#d32f2f}
+.stat-pct.blue{color:#1976d2}
+
+/* SECTION */
+.section{background:#fff;border-radius:16px;margin-bottom:24px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.section-header{background:linear-gradient(135deg,#0f3460,#16498c);color:#fff;padding:20px 24px;display:flex;align-items:center;gap:12px;font-size:18px;font-weight:700}
+.section-header i{font-size:24px;opacity:0.9}
+.section-body{padding:32px}
+
+/* INSTITUTION CARDS */
+.institution-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:24px;margin-bottom:24px}
+.inst-card{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.inst-header{padding:24px;font-size:16px;font-weight:700;color:#fff;display:flex;align-items:center;gap:12px}
+.inst-header.ilpi{background:linear-gradient(135deg,#0f3460,#16498c)}
+.inst-header.casa{background:linear-gradient(135deg,#5a36b5,#6c3fb3)}
+.inst-header.colab{background:linear-gradient(135deg,#f26c00,#d45500)}
+.inst-stats{padding:24px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.inst-stat-item{text-align:center;padding:12px;border-radius:8px;background:#f5f7fc}
+.inst-stat-item .label{font-size:12px;color:#7f8c8d;font-weight:600;text-transform:uppercase;margin-bottom:4px}
+.inst-stat-item .value{font-size:32px;font-weight:700;cursor:pointer;transition:color 0.2s}
+.inst-stat-item .stat-pct{font-size:12px;font-weight:600;margin-top:4px}
+.inst-stat-item .value:hover{color:#1976d2}
+.inst-stat-item.green .value{color:#27ae60}
+.inst-stat-item.green .value:hover{color:#1e8449}
+.inst-stat-item.green .stat-pct{color:#27ae60}
+.inst-stat-item.brown .value{color:#d68910}
+.inst-stat-item.brown .value:hover{color:#a0620b}
+.inst-stat-item.brown .stat-pct{color:#d68910}
+.inst-stat-item.red .value{color:#d32f2f}
+.inst-stat-item.red .value:hover{color:#a02622}
+.inst-stat-item.red .stat-pct{color:#d32f2f}
+.inst-detail{padding:0 24px 24px;font-size:14px;color:#555;line-height:1.6}
+.inst-detail strong{color:#2c3e50;display:block;margin-top:8px}
+
+/* INFO GRID */
+.info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px}
+.info-box{background:#fff;border:2px solid #ecf0f1;border-radius:16px;padding:24px;box-shadow:0 2px 8px rgba(0,0,0,.08);transition:all 0.3s}
+.info-box:hover{border-color:#0f3460;box-shadow:0 4px 16px rgba(15,52,96,.12)}
+.info-box h3{font-size:16px;font-weight:700;color:#0f3460;text-transform:uppercase;margin-bottom:20px;letter-spacing:1px;padding-bottom:12px;border-bottom:2px solid #ecf0f1}
+.info-section{margin-bottom:16px}
+.info-section strong{color:#2c3e50;display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:13px}
+.info-section strong i{font-size:16px}
+.info-section p{color:#555;line-height:1.8;font-size:14px;margin:0;padding-left:24px}
+.edit-btn{background:#1976d2;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-weight:600;cursor:pointer;transition:all 0.2s;font-size:12px;margin-top:12px;display:inline-flex;align-items:center;gap:6px}
+.edit-btn:hover{background:#1565c0;box-shadow:0 2px 8px rgba(25,118,210,.3)}
+.info-box .edit-btn{margin-top:12px}
+.inst-detail .edit-btn{margin-top:6px}
+
+/* MEASURES & OBSERVATIONS */
+.measures-obs{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:24px}
+.mo-box{background:#fff;border-radius:16px;padding:24px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.mo-box h2{font-size:16px;font-weight:700;color:#0f3460;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.mo-box p{color:#555;line-height:1.8;font-size:14px}
+.edit-trigger{cursor:pointer;color:#1976d2;text-decoration:none;font-weight:500;margin-top:12px;display:inline-block}
+
+/* HISTORY - RELATÓRIO */
+.history-timeline{margin-top:24px}
+.no-history{text-align:center;padding:40px;color:#7f8c8d}
+
+/* HISTORY REPORT CARDS */
+.history-report{background:#fff;border-radius:16px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.08);overflow:hidden;transition:all 0.3s}
+.history-report-header{display:flex;justify-content:space-between;align-items:center;padding:20px 24px;background:#f5f7fc;border-bottom:2px solid #ecf0f1;cursor:pointer;user-select:none;transition:all 0.3s}
+.history-report-header:hover{background:#eef2f7}
+.history-report-header.expanded{background:#ecf0f1}
+.history-report-header-content{display:flex;align-items:center;gap:12px;flex:1}
+.history-report-toggle{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;color:#0f3460;font-size:14px;transition:transform 0.3s;flex-shrink:0}
+.history-report-header.expanded .history-report-toggle{transform:rotate(180deg)}
+.history-report-info{flex:1}
+.history-report-date{font-weight:600;color:#0f3460;font-size:14px;margin-bottom:4px;display:flex;align-items:center;gap:6px}
+.history-report-summary{font-size:13px;color:#666}
+.history-report-content{max-height:0;overflow:hidden;transition:max-height 0.3s ease}
+.history-report-content.expanded{max-height:2000px}
+.history-report-body{padding:24px;border-top:2px solid #ecf0f1}
+.history-btn-delete{background:#d32f2f;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-weight:600;cursor:pointer;transition:all 0.2s;font-size:13px;display:inline-flex;align-items:center;gap:6px;flex-shrink:0}
+.history-btn-delete:hover{background:#b71c1c;box-shadow:0 2px 8px rgba(211,47,47,.3)}
+
+/* MODAL */
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center}
+.modal.active{display:flex}
+.modal-box{background:#fff;width:90%;max-width:600px;border-radius:16px;padding:32px;box-shadow:0 12px 40px rgba(0,0,0,.3)}
+.modal-box h2{font-size:20px;font-weight:700;color:#0f3460;margin-bottom:20px}
+.modal-box textarea,.modal-box input{width:100%;padding:12px;font-size:14px;border:1px solid #e0e0e0;border-radius:8px;font-family:inherit;resize:vertical}
+.modal-box textarea{min-height:120px}
+.modal-box input[type="number"]{font-size:16px}
+.modal-feedback{margin-top:12px;padding:12px;border-radius:6px;font-size:13px;display:none}
+.modal-feedback.success{background:#e8f5e9;color:#27ae60;display:block}
+.modal-feedback.error{background:#ffebee;color:#d32f2f;display:block}
+.modal-buttons{display:flex;gap:12px;margin-top:24px;justify-content:flex-end}
+.modal-btn{padding:10px 24px;border:none;border-radius:8px;font-weight:600;cursor:pointer;transition:all 0.3s;font-size:14px}
+.modal-btn.save{background:#27ae60;color:#fff}
+.modal-btn.save:hover{background:#229954;box-shadow:0 4px 12px rgba(39,174,96,.3)}
+.modal-btn.cancel{background:#e0e0e0;color:#2c3e50}
+.modal-btn.cancel:hover{background:#bdbdbd}
+
+/* FOOTER */
+.footer{text-align:center;padding:20px;color:#7f8c8d;font-size:12px;margin-top:40px}
+
+/* ANIMATIONS */
+@keyframes slideIn {
+  from { transform: translateX(400px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .header-content{grid-template-columns:1fr;gap:20px}
+  .measures-obs{grid-template-columns:1fr}
+  .stat-value{font-size:32px}
+  .chart-grid{grid-template-columns:1fr}
+  .institution-cards{grid-template-columns:1fr}
+  .tabs-container{flex-wrap:wrap}
+  .history-report-header{flex-direction:column;gap:12px}
+  .history-btn-delete{width:100%}
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="tabs-container">
+    <button class="tab-btn active" onclick="switchTab('current')"><i class="fas fa-file-medical"></i> Boletim Atual</button>
+    <button class="tab-btn" onclick="switchTab('history')"><i class="fas fa-history"></i> Histórico</button>
+  </div>
+
+  <!-- TAB: CURRENT -->
+  <div id="current" class="tab-content active">
+    <div class="toolbar">
+      <button class="btn-export" style="background:#27ae60;color:#fff" onclick="saveReport()"><i class="fas fa-save"></i> Salvar Relatório</button>
+      <button class="btn-export pdf" onclick="exportPDF()"><i class="fas fa-file-pdf"></i> Exportar PDF</button>
+      <button class="btn-export png" onclick="exportPNG()"><i class="fas fa-image"></i> Exportar Imagem</button>
+    </div>
+
+    <div id="exportArea">
+      <div class="header-premium">
+        <div class="header-content">
+          <div class="header-title">
+            <h1><i class="fas fa-heartbeat"></i> Boletim Epidemiológico</h1>
+            <div class="subtitle">Centro de Idosos Sagrada Família (CISF) — Monitoramento de Síndromes Respiratórias</div>
+          </div>
+          <div class="header-date">
+            <span>Atualização</span>
+            <span class="date-value" id="updateDate"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- OVERVIEW STATS -->
+      <div class="stats-overview" id="statsOverview"></div>
+
+      <!-- INSTITUTION CARDS WITH INLINE CHARTS -->
+      <div class="section">
+        <div class="section-header">
+          <i class="fas fa-hospital"></i> Instituições — Panorama Detalhado
+        </div>
+        <div class="section-body">
+          <div class="institution-cards" id="institutionCards"></div>
+        </div>
+      </div>
+
+      <!-- DETAILED INFO - NÃO EXPORTA -->
+      <div class="section no-export">
+        <div class="section-header">
+          <i class="fas fa-info-circle"></i> Informações Detalhadas por Instituição
+        </div>
+        <div class="section-body">
+          <div class="info-grid" id="infoGrid"></div>
+        </div>
+      </div>
+
+      <!-- MEASURES & OBSERVATIONS -->
+      <div class="section">
+        <div class="section-header">
+          <i class="fas fa-shield-alt"></i> Protocolos e Observações
+        </div>
+        <div class="section-body">
+          <div class="measures-obs">
+            <div class="mo-box">
+              <h2><i class="fas fa-check-circle" style="color:#27ae60"></i> Medidas Adotadas</h2>
+              <p id="measuresText"></p>
+              <span class="edit-trigger hide-on-export" onclick="openEdit('medidas','Medidas Adotadas')"><i class="fas fa-edit"></i> Editar</span>
+            </div>
+            <div class="mo-box">
+              <h2><i class="fas fa-comment" style="color:#f26c00"></i> Observações</h2>
+              <p id="observationsText"></p>
+              <span class="edit-trigger hide-on-export" onclick="openEdit('obs','Observações')"><i class="fas fa-edit"></i> Editar</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <p>Boletim Epidemiológico — CISF | Dados atualizados em <span id="footerDate"></span><br>
+        Este documento contém informações confidenciais de saúde pública.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: HISTORY (RELATÓRIO) -->
+  <div id="history" class="tab-content">
+    <div class="section">
+      <div class="section-header">
+        <i class="fas fa-history"></i> Histórico de Boletins
+      </div>
+      <div class="section-body">
+        <div id="historyContainer" class="history-timeline"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- MODAL -->
+<div id="modal" class="modal">
+  <div class="modal-box">
+    <h2 id="modalTitle"></h2>
+    <textarea id="editor" placeholder="Edite o conteúdo aqui..."></textarea>
+    <div class="modal-feedback" id="modalFeedback"></div>
+    <div class="modal-buttons">
+      <button class="modal-btn cancel" onclick="closeModal()">Cancelar</button>
+      <button class="modal-btn save" onclick="saveField()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const defaults={
+  ilpi:{total:68,sint:7,conf:0,infoA:'Idosos assintomáticos, sem sintomas no momento. Monitoramento contínuo em vigor.',infoS:'7 idosos com sintomas respiratórios leves. Isolamento precaução e testagem em andamento.',infoC:'Nenhum caso confirmado',det:'ILPI apresenta situação estável com apenas casos suspeitos sob monitoramento. Equipe de saúde aplicando protocolos de controle de infecção.'},
+  casa:{total:30,sint:0,conf:0,infoA:'Idosos assintomáticos, sem sintomas no momento. Monitoramento contínuo.',infoS:'Sem casos suspeitos no período',infoC:'Nenhum caso confirmado',det:'CASA LAR em situação excelente. Nenhum caso reportado ou suspeito. Protocolos de prevenção mantidos.'},
+  colab:{total:202,sint:3,conf:0,infoA:'Colaboradores assintomáticos realizando funções normalmente.',infoS:'3 colaboradores com sintomas leves. Isolamento domiciliar recomendado.',infoC:'Nenhum caso confirmado',det:'Colaboradores em monitoramento. 3 casos suspeitos em isolamento. Cobertura vacinal atualizada na maioria dos servidores.'},
+  medidas:'Uso obrigatório de EPI apropriado • Higienização reforçada de superfícies e ambientes • Monitoramento diário de sintomas • Isolamento de casos suspeitos • Ventilação natural em ambientes coletivos • Testagem conforme protocolos de saúde pública.',
+  obs:'Situação epidemiológica sob controle. Mantém-se vigilância contínua. Próximo boletim: em 7 dias.'
+};
+
+let data=JSON.parse(localStorage.getItem('boletimV7Pro')||JSON.stringify(defaults));
+let history=JSON.parse(localStorage.getItem('boletimV7History')||'[]');
+let current='';
+
+function ass(o){return o.total-o.sint-o.conf}
+
+function get(path){
+  if(path.includes('.')){
+    let p=path.split('.');
+    return data[p[0]][p[1]];
+  }
+  return data[path];
+}
+
+function setv(path,v){
+  if(path.includes('.')){
+    let p=path.split('.');
+    data[p[0]][p[1]]=v;
+  }else{
+    data[path]=v;
+  }
+}
+
+function switchTab(tab){
+  document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el=>el.classList.remove('active'));
+  document.getElementById(tab).classList.add('active');
+  document.querySelector(`[onclick="switchTab('${tab}')"]`).classList.add('active');
+  
+  if(tab==='history'){
+    renderHistory();
+  }
+}
+
+function render(){
+  const today=new Date().toLocaleDateString('pt-BR',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('updateDate').innerText=today;
+  document.getElementById('footerDate').innerText=today;
+
+  let statsHTML='';
+  let totalPop=0,totalSint=0,totalConf=0;
+  for(const k of ['ilpi','casa','colab']){
+    totalPop+=data[k].total;
+    totalSint+=data[k].sint;
+    totalConf+=data[k].conf;
+  }
+  let totalAss=totalPop-totalSint-totalConf;
+  
+  statsHTML+=`<div class="stat-card blue"><div class="stat-label">População Total</div><div class="stat-value">${totalPop}</div></div>`;
+  statsHTML+=`<div class="stat-card green"><div class="stat-label">Assintomáticos</div><div class="stat-value">${totalAss}</div><div class="stat-pct green">${(totalPop>0?(totalAss/totalPop*100).toFixed(1):0)}%</div></div>`;
+  statsHTML+=`<div class="stat-card brown"><div class="stat-label">Sintomáticos</div><div class="stat-value">${totalSint}</div><div class="stat-pct brown">${(totalPop>0?(totalSint/totalPop*100).toFixed(1):0)}%</div></div>`;
+  statsHTML+=`<div class="stat-card red"><div class="stat-label">Confirmados</div><div class="stat-value">${totalConf}</div><div class="stat-pct red">${(totalPop>0?(totalConf/totalPop*100).toFixed(1):0)}%</div></div>`;
+  document.getElementById('statsOverview').innerHTML=statsHTML;
+
+  // Institution cards
+  let instHTML='';
+  for(const [k,label,color] of [['ilpi','ILPI – Instituição de Longa Permanência para Idosos','ilpi'],['casa','CASA LAR','casa'],['colab','COLABORADORES','colab']]){
+    let d=data[k];
+    let a=ass(d);
+    let pctA=(d.total>0?(a/d.total*100).toFixed(1):0);
+    let pctS=(d.total>0?(d.sint/d.total*100).toFixed(1):0);
+    let pctC=(d.total>0?(d.conf/d.total*100).toFixed(1):0);
+    instHTML+=`<div class="inst-card">
+      <div class="inst-header ${color}"><i class="fas fa-users" style="font-size:20px"></i>${label}</div>
+      <div class="inst-stats">
+        <div class="inst-stat-item">
+          <div class="label">Total</div>
+          <div class="value" onclick="openEdit('${k}.total','População Total — ${label}')">${d.total}</div>
+        </div>
+        <div class="inst-stat-item green">
+          <div class="label">Assintomáticos</div>
+          <div class="value">${a}</div>
+          <div class="stat-pct">${pctA}%</div>
+        </div>
+        <div class="inst-stat-item brown">
+          <div class="label">Sintomáticos</div>
+          <div class="value" onclick="openEdit('${k}.sint','Sintomáticos — ${label}')">${d.sint}</div>
+          <div class="stat-pct">${pctS}%</div>
+        </div>
+        <div class="inst-stat-item red">
+          <div class="label">Confirmados</div>
+          <div class="value" onclick="openEdit('${k}.conf','Confirmados — ${label}')">${d.conf}</div>
+          <div class="stat-pct">${pctC}%</div>
+        </div>
+      </div>
+      <div class="inst-detail">
+        <div style="margin-bottom:12px">
+          <strong style="color:#27ae60;display:flex;align-items:center;gap:6px;margin-bottom:4px"><i class="fas fa-check-circle"></i> Assintomáticos:</strong>
+          <p style="color:#555;line-height:1.6;margin:0 0 6px 24px">${data[k].infoA}</p>
+          <button class="edit-btn hide-on-export" onclick="openEdit('${k}.infoA','Editar: Assintomáticos — ${label}')" style="margin-left:24px;display:inline-flex"><i class="fas fa-edit"></i> Editar</button>
+        </div>
+        <div style="margin-bottom:12px">
+          <strong style="color:#d68910;display:flex;align-items:center;gap:6px;margin-bottom:4px"><i class="fas fa-exclamation-triangle"></i> Sintomáticos:</strong>
+          <p style="color:#555;line-height:1.6;margin:0 0 6px 24px">${data[k].infoS}</p>
+          <button class="edit-btn hide-on-export" onclick="openEdit('${k}.infoS','Editar: Sintomáticos — ${label}')" style="margin-left:24px;display:inline-flex"><i class="fas fa-edit"></i> Editar</button>
+        </div>
+        <div>
+          <strong style="color:#d32f2f;display:flex;align-items:center;gap:6px;margin-bottom:4px"><i class="fas fa-times-circle"></i> Confirmados:</strong>
+          <p style="color:#555;line-height:1.6;margin:0 0 6px 24px">${data[k].infoC}</p>
+          <button class="edit-btn hide-on-export" onclick="openEdit('${k}.infoC','Editar: Confirmados — ${label}')" style="margin-left:24px;display:inline-flex"><i class="fas fa-edit"></i> Editar</button>
+        </div>
+      </div>
+    </div>`;
+  }
+  document.getElementById('institutionCards').innerHTML=instHTML;
+
+  // Info grid
+  let infoHTML='';
+  for(const [k,label] of [['ilpi','ILPI'],['casa','CASA LAR'],['colab','COLABORADORES']]){
+    infoHTML+=`<div class="info-box">
+      <h3><i class="fas fa-hospital" style="color:#0f3460"></i> ${label}</h3>
+      
+      <div class="info-section">
+        <strong><i class="fas fa-check-circle" style="color:#27ae60"></i> Assintomáticos</strong>
+        <p>${data[k].infoA}</p>
+        <button class="edit-btn" onclick="openEdit('${k}.infoA','Editar: Assintomáticos — ${label}')"><i class="fas fa-edit"></i> Editar</button>
+      </div>
+      
+      <div class="info-section">
+        <strong><i class="fas fa-exclamation-triangle" style="color:#d68910"></i> Sintomáticos</strong>
+        <p>${data[k].infoS}</p>
+        <button class="edit-btn" onclick="openEdit('${k}.infoS','Editar: Sintomáticos — ${label}')"><i class="fas fa-edit"></i> Editar</button>
+      </div>
+      
+      <div class="info-section">
+        <strong><i class="fas fa-times-circle" style="color:#d32f2f"></i> Confirmados</strong>
+        <p>${data[k].infoC}</p>
+        <button class="edit-btn" onclick="openEdit('${k}.infoC','Editar: Confirmados — ${label}')"><i class="fas fa-edit"></i> Editar</button>
+      </div>
+      
+      <div class="info-section">
+        <strong><i class="fas fa-info-circle" style="color:#0f3460"></i> Detalhamento</strong>
+        <p>${data[k].det}</p>
+        <button class="edit-btn" onclick="openEdit('${k}.det','Editar: Detalhamento — ${label}')"><i class="fas fa-edit"></i> Editar</button>
+      </div>
+    </div>`;
+  }
+  document.getElementById('infoGrid').innerHTML=infoHTML;
+
+  document.getElementById('measuresText').innerHTML=data.medidas.split('•').map(t=>t.trim()).filter(t=>t).map(t=>'<span style="display:block;margin-bottom:8px">• '+t+'</span>').join('');
+  document.getElementById('observationsText').innerText=data.obs;
+
+  localStorage.setItem('boletimV7Pro',JSON.stringify(data));
+}
+
+function openEdit(path,label){
+  current=path;
+  document.getElementById('modalTitle').innerText='Editar: '+label;
+  document.getElementById('editor').value=get(path);
+  document.getElementById('modalFeedback').innerHTML='';
+  document.getElementById('modal').classList.add('active');
+  document.getElementById('editor').focus();
+}
+
+function closeModal(){
+  document.getElementById('modal').classList.remove('active');
+}
+
+function saveField(){
+  let v=document.getElementById('editor').value.trim();
+  let feedback=document.getElementById('modalFeedback');
+  
+  if(!v){
+    feedback.innerHTML='❌ Campo não pode estar vazio';
+    feedback.className='modal-feedback error';
+    return;
+  }
+
+  let numVal=Number(v);
+  if(!isNaN(numVal) && v.match(/^\d+$/)){
+    v=numVal;
+  }
+
+  setv(current,v);
+
+  for(const k of ['ilpi','casa','colab']){
+    if(data[k].sint+data[k].conf>data[k].total){
+      feedback.innerHTML='❌ Sintomáticos + Confirmados excedem população total em '+k.toUpperCase();
+      feedback.className='modal-feedback error';
+      return;
+    }
+  }
+
+  feedback.innerHTML='✅ Campo atualizado!';
+  feedback.className='modal-feedback success';
+
+  localStorage.setItem('boletimV7Pro',JSON.stringify(data));
+
+  setTimeout(()=>{
+    closeModal();
+    render();
+  },600);
+}
+
+function renderHistory(){
+  let container=document.getElementById('historyContainer');
+  if(history.length===0){
+    container.innerHTML='<div class="no-history"><i class="fas fa-inbox" style="font-size:48px;color:#bdbdbd;margin-bottom:16px;display:block"></i>Nenhum histórico de alterações registrado.</div>';
+    return;
+  }
+
+  let html='';
+  for(let i=history.length-1;i>=0;i--){
+    let h=history[i];
+    let d=h.data;
+    
+    // Cabeçalho do relatório
+    let totalPop=d.ilpi.total+d.casa.total+d.colab.total;
+    let totalSint=d.ilpi.sint+d.casa.sint+d.colab.sint;
+    let totalConf=d.ilpi.conf+d.casa.conf+d.colab.conf;
+    
+    html+=`<div class="history-report" data-index="${i}">
+      <div class="history-report-header" onclick="toggleHistoryReport(${i})">
+        <div class="history-report-header-content">
+          <div class="history-report-toggle"><i class="fas fa-chevron-down"></i></div>
+          <div class="history-report-info">
+            <div class="history-report-date"><i class="fas fa-calendar"></i> ${h.date} — ${new Date(h.timestamp).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</div>
+            <div class="history-report-summary"><span style="color:#d68910;font-weight:600">${totalSint}</span> Sintomáticos • <span style="color:#d32f2f;font-weight:600">${totalConf}</span> Confirmados</div>
+          </div>
+        </div>
+        <button class="history-btn-delete" onclick="deleteSnapshot(${i}, event)" title="Deletar este relatório"><i class="fas fa-trash"></i> Deletar</button>
+      </div>
+      
+      <div class="history-report-content">
+        <div class="history-report-body">
+          <div class="institution-cards">`;
+    
+    // Cartões das instituições
+    for(const [k,label,color] of [['ilpi','ILPI – Instituição de Longa Permanência para Idosos','ilpi'],['casa','CASA LAR','casa'],['colab','COLABORADORES','colab']]){
+      let inst=d[k];
+      let a=inst.total-inst.sint-inst.conf;
+      let pctA=(inst.total>0?(a/inst.total*100).toFixed(1):0);
+      let pctS=(inst.total>0?(inst.sint/inst.total*100).toFixed(1):0);
+      let pctC=(inst.total>0?(inst.conf/inst.total*100).toFixed(1):0);
+      
+      html+=`<div class="inst-card">
+        <div class="inst-header ${color}"><i class="fas fa-users" style="font-size:20px"></i>${label}</div>
+        <div class="inst-stats">
+          <div class="inst-stat-item">
+            <div class="label">Total</div>
+            <div class="value">${inst.total}</div>
+          </div>
+          <div class="inst-stat-item green">
+            <div class="label">Assintomáticos</div>
+            <div class="value">${a}</div>
+            <div class="stat-pct">${pctA}%</div>
+          </div>
+          <div class="inst-stat-item brown">
+            <div class="label">Sintomáticos</div>
+            <div class="value">${inst.sint}</div>
+            <div class="stat-pct">${pctS}%</div>
+          </div>
+          <div class="inst-stat-item red">
+            <div class="label">Confirmados</div>
+            <div class="value">${inst.conf}</div>
+            <div class="stat-pct">${pctC}%</div>
+          </div>
+        </div>
+      </div>`;
+    }
+    
+    html+=`</div></div></div></div>`;
+  }
+  container.innerHTML=html;
+}
+
+function toggleHistoryReport(idx){
+  let reports=document.querySelectorAll('.history-report');
+  
+  // Fechar todos os outros
+  reports.forEach(r=>{
+    let dataIdx=parseInt(r.getAttribute('data-index'));
+    if(dataIdx!==idx){
+      r.querySelector('.history-report-header').classList.remove('expanded');
+      r.querySelector('.history-report-content').classList.remove('expanded');
+    }
+  });
+  
+  // Toggle o clicado
+  let currentReport=document.querySelector(`.history-report[data-index="${idx}"]`);
+  let header=currentReport.querySelector('.history-report-header');
+  let content=currentReport.querySelector('.history-report-content');
+  
+  header.classList.toggle('expanded');
+  content.classList.toggle('expanded');
+}
+
+function deleteSnapshot(idx,e){
+  if(e) e.stopPropagation();
+  if(confirm('Deletar este registro?')){
+    history.splice(idx,1);
+    localStorage.setItem('boletimV7History',JSON.stringify(history));
+    renderHistory();
+  }
+}
+
+function saveReport(){
+  let timestamp=new Date().toISOString();
+  let snapshot={
+    timestamp:timestamp,
+    date:new Date().toLocaleDateString('pt-BR'),
+    data:JSON.parse(JSON.stringify(data))
+  };
+  history.push(snapshot);
+  localStorage.setItem('boletimV7History',JSON.stringify(history));
+  
+  // Toast feedback
+  let t=document.createElement('div');
+  t.style.cssText='position:fixed;bottom:20px;right:20px;background:#27ae60;color:#fff;padding:16px 24px;border-radius:8px;font-weight:600;z-index:2000;box-shadow:0 4px 12px rgba(39,174,96,.3);animation:slideIn 0.3s ease;';
+  t.textContent='✅ Relatório salvo com sucesso!';
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),2800);
+}
+
+async function exportPNG(){
+  // Ocultar elementos que não devem ser exportados
+  document.querySelectorAll('.no-export').forEach(el=>el.style.display='none');
+  document.querySelectorAll('.hide-on-export').forEach(el=>el.style.display='none');
+  document.querySelector('.toolbar').style.display='none';
+  document.querySelector('.tabs-container').style.display='none';
+  
+  const element=document.getElementById('exportArea');
+  const canvas=await html2canvas(element,{scale:2,useCORS:true,logging:false});
+  const link=document.createElement('a');
+  link.href=canvas.toDataURL('image/png');
+  link.download='Boletim_Epidemiologico_'+new Date().toISOString().split('T')[0]+'.png';
+  link.click();
+  
+  // Restaurar visibilidade
+  document.querySelectorAll('.no-export').forEach(el=>el.style.display='block');
+  document.querySelectorAll('.hide-on-export').forEach(el=>el.style.display='');
+  document.querySelector('.toolbar').style.display='flex';
+  document.querySelector('.tabs-container').style.display='flex';
+}
+
+async function exportPDF(){
+  const {jsPDF}=window.jspdf;
+  
+  // Ocultar elementos que não devem ser exportados
+  document.querySelectorAll('.no-export').forEach(el=>el.style.display='none');
+  document.querySelectorAll('.hide-on-export').forEach(el=>el.style.display='none');
+  document.querySelector('.toolbar').style.display='none';
+  document.querySelector('.tabs-container').style.display='none';
+  
+  const element=document.getElementById('exportArea');
+  const canvas=await html2canvas(element,{scale:2,useCORS:true,logging:false});
+  const img=canvas.toDataURL('image/png');
+  const pdf=new jsPDF('p','mm','a4');
+  const pdfWidth=pdf.internal.pageSize.getWidth();
+  const pdfHeight=(canvas.height*pdfWidth)/canvas.width;
+  let heightLeft=pdfHeight;
+  let position=0;
+  
+  pdf.addImage(img,'PNG',0,position,pdfWidth,pdfHeight);
+  heightLeft-=pdf.internal.pageSize.getHeight();
+  
+  while(heightLeft>0){
+    position=heightLeft-pdfHeight;
+    pdf.addPage();
+    pdf.addImage(img,'PNG',0,position,pdfWidth,pdfHeight);
+    heightLeft-=pdf.internal.pageSize.getHeight();
+  }
+  
+  pdf.save('Boletim_Epidemiologico_'+new Date().toISOString().split('T')[0]+'.pdf');
+  
+  // Restaurar visibilidade
+  document.querySelectorAll('.no-export').forEach(el=>el.style.display='block');
+  document.querySelectorAll('.hide-on-export').forEach(el=>el.style.display='');
+  document.querySelector('.toolbar').style.display='flex';
+  document.querySelector('.tabs-container').style.display='flex';
+}
+
+render();
+</script>
+</body>
+</html>

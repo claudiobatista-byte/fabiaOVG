@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mapa de Monitoramento e Isolamento – ILPI</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --verde-bg:#c8f0d0;    --verde-border:#2e7d42;  --verde-header:#2e7d42;  --verde-text:#1a4a28;
+  --amarelo-bg:#fef3b0;  --amarelo-border:#b8860b;--amarelo-header:#c9960d;--amarelo-text:#6b4c00;
+  --roxo-bg:#e8d5f7;     --roxo-border:#7b3fa0;   --roxo-header:#7b3fa0;   --roxo-text:#4a1a6e;
+  --vermelho-bg:#fdd5d5; --vermelho-border:#b91c1c;--vermelho-header:#c0392b;--vermelho-text:#6b1111;
+  --cinza-bg:#e8e8e2;    --cinza-border:#999;     --cinza-header:#6b6b6b;
+  --reforma-bg:#d5d5cc;  --reforma-header:#555;
+}
+
+body { font-family:'Segoe UI',Arial,sans-serif; background:#e8e8e0; color:#222; padding:20px; font-size:13px; }
+
+.page { max-width:980px; margin:0 auto; background:#fff; border-radius:12px; padding:22px; box-shadow:0 3px 16px rgba(0,0,0,0.13); }
+
+.header { display:flex; align-items:center; gap:14px; border-bottom:2px solid #ddd; padding-bottom:14px; margin-bottom:16px; }
+.sigla-logo { height:52px;width:auto;flex-shrink:0;background:#1a5276;border-radius:10px;display:flex;align-items:center;justify-content:center;padding:0 14px;color:white;font-weight:900;font-size:20px;letter-spacing:2px; }
+
+.header h1 { font-size:16px;font-weight:700;color:#1a3a5c;line-height:1.3; }
+.header small { font-size:11px;color:#666; }
+.data-box { margin-left:auto;font-size:11px;color:#555;text-align:right;white-space:nowrap; }
+.data-box span[contenteditable] { border-bottom:1px dashed #aaa;outline:none;display:inline-block;min-width:80px; }
+
+.toolbar { display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:16px;padding:10px 14px;background:#eef4fb;border-radius:8px; }
+.toolbar-hint { font-size:11px;color:#1a3a5c;font-weight:600;flex:1; }
+.tbtn { font-size:12px;padding:7px 20px;border-radius:20px;border:none;background:#1a5276;color:white;cursor:pointer;transition:all .12s;font-weight:700;display:flex;align-items:center;gap:6px;box-shadow:0 2px 6px rgba(26,82,118,0.25); }
+.tbtn:hover { background:#154360;box-shadow:0 3px 10px rgba(26,82,118,0.35); }
+.tbtn:disabled { background:#aaa;cursor:not-allowed;box-shadow:none; }
+
+.legenda { display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;padding:12px 14px;border:1.5px solid #ddd;border-radius:10px;background:#fafaf7;align-items:center; }
+.legenda-title { font-size:11px;font-weight:700;color:#555;margin-right:2px; }
+.leg-item { display:flex;align-items:center;gap:7px;font-size:11px;font-weight:600;padding:5px 12px 5px 8px;border-radius:24px;border:2px solid transparent;cursor:default; }
+.leg-verde   { background:var(--verde-bg);   border-color:var(--verde-border);   color:var(--verde-text); }
+.leg-amarelo { background:var(--amarelo-bg); border-color:var(--amarelo-border); color:var(--amarelo-text); }
+.leg-roxo    { background:var(--roxo-bg);    border-color:var(--roxo-border);    color:var(--roxo-text); }
+.leg-vermelho{ background:var(--vermelho-bg);border-color:var(--vermelho-border);color:var(--vermelho-text); }
+
+.leg-icon { width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;font-weight:900;color:white;border:2.5px solid rgba(0,0,0,0.12); }
+.leg-icon-verde    { background:var(--verde-header); }
+.leg-icon-amarelo  { background:var(--amarelo-header); }
+.leg-icon-roxo     { background:var(--roxo-header); }
+.leg-icon-vermelho { background:var(--vermelho-header); }
+
+.leg-text { outline:none; cursor:text; border-bottom:1px dashed transparent; transition:border-color .15s; }
+.leg-text:hover { border-bottom-color:rgba(0,0,0,0.25); }
+.leg-text:focus { border-bottom-color:rgba(0,0,0,0.5); }
+
+.section-title { text-align:center;font-size:14px;font-weight:800;background:#1a5276;color:white;border-radius:6px;padding:7px 12px;margin-bottom:12px;letter-spacing:.8px;text-transform:uppercase; }
+
+.grid-quartos { display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px; }
+
+.quarto { border-radius:10px;overflow:hidden;border:2.5px solid #c8c8be;background:#fff;transition:box-shadow .15s; }
+.quarto:hover { box-shadow:0 3px 10px rgba(0,0,0,0.14); }
+
+.quarto-header { display:flex;align-items:center;justify-content:space-between;padding:6px 10px;color:white;font-weight:700;transition:background .25s; }
+.qh-left { display:flex;flex-direction:column; }
+.quarto-label { font-size:8px;text-transform:uppercase;letter-spacing:1px;opacity:.8; }
+.quarto-num   { font-size:24px;line-height:1;font-weight:900; }
+
+.quarto-color-btns { display:flex;gap:4px;align-items:center; }
+.qc-btn { width:20px;height:20px;border-radius:50%;border:2.5px solid rgba(255,255,255,0.45);cursor:pointer;transition:transform .12s,border-color .12s;display:flex;align-items:center;justify-content:center;font-size:8px;color:white;font-weight:900;flex-shrink:0; }
+.qc-btn:hover { transform:scale(1.35);border-color:white; }
+.qcb-verde    { background:var(--verde-header); }
+.qcb-amarelo  { background:var(--amarelo-header); }
+.qcb-roxo     { background:var(--roxo-header); }
+.qcb-vermelho { background:var(--vermelho-header); }
+.qcb-cinza    { background:#888; }
+
+.quarto-body { padding:8px 10px;min-height:50px;display:flex;flex-direction:column;gap:5px;transition:background .25s; }
+
+.qh-verde    { background:var(--verde-header); }
+.qh-amarelo  { background:var(--amarelo-header); }
+.qh-roxo     { background:var(--roxo-header); }
+.qh-vermelho { background:var(--vermelho-header); }
+.qh-cinza    { background:var(--cinza-header); }
+.qh-reforma  { background:var(--reforma-header); }
+
+.qbody-verde    { background:var(--verde-bg); }
+.qbody-amarelo  { background:var(--amarelo-bg); }
+.qbody-roxo     { background:var(--roxo-bg); }
+.qbody-vermelho { background:var(--vermelho-bg); }
+.qbody-cinza    { background:var(--cinza-bg); }
+.qbody-reforma  { background:var(--reforma-bg); }
+
+.qborder-verde    { border-color:var(--verde-border); }
+.qborder-amarelo  { border-color:var(--amarelo-border); }
+.qborder-roxo     { border-color:var(--roxo-border); }
+.qborder-vermelho { border-color:var(--vermelho-border); }
+
+.residente-row { display:flex;align-items:center;gap:5px;padding:4px 6px;border-radius:5px;background:rgba(255,255,255,0.55); }
+.residente-row:hover { background:rgba(255,255,255,0.85); }
+
+.status-icon { width:17px;height:17px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;font-size:9px;font-weight:900;color:white;cursor:pointer;border:2px solid rgba(0,0,0,0.15);transition:transform .1s,box-shadow .1s; }
+.status-icon:hover { transform:scale(1.3);box-shadow:0 2px 6px rgba(0,0,0,0.25); }
+.icon-verde    { background:var(--verde-header); }
+.icon-amarelo  { background:var(--amarelo-header); }
+.icon-roxo     { background:var(--roxo-header); }
+.icon-vermelho { background:var(--vermelho-header); }
+.icon-vago     { background:#aaa; }
+
+.residente-nome { font-size:12px;font-weight:600;flex:1;outline:none;border:none;background:transparent;cursor:text;color:#222; }
+
+.btn-remove { background:transparent;border:none;color:#c00;font-size:13px;line-height:1;cursor:pointer;padding:0 2px;display:none;font-weight:700; }
+.residente-row:hover .btn-remove { display:inline; }
+
+.btn-add { font-size:10px;color:#555;background:rgba(255,255,255,0.5);border:1px dashed #aaa;border-radius:4px;padding:2px 6px;cursor:pointer;margin-top:2px;width:100%;text-align:left;transition:background .1s; }
+.btn-add:hover { background:rgba(255,255,255,0.85); }
+.btn-add-info { font-size:10px;color:#444;background:rgba(255,255,255,0.4);border:1px dashed #bbb;border-radius:4px;padding:2px 6px;cursor:pointer;margin-top:1px;width:100%;text-align:left;transition:background .1s;font-style:italic; }
+.btn-add-info:hover { background:rgba(255,255,255,0.85); }
+.info-row { display:flex;align-items:flex-start;gap:5px;padding:5px 8px;border-radius:5px;background:rgba(255,255,255,0.4); }
+.info-row:hover { background:rgba(255,255,255,0.75); }
+.info-text { font-size:11px;flex:1;outline:none;border:none;background:transparent;cursor:text;font-weight:700;line-height:1.6;resize:none;font-family:inherit;padding:2px 0;word-break:break-word;overflow-wrap:break-word;white-space:pre-wrap;width:100%;min-width:0; }
+.btn-remove-info { background:transparent;border:none;color:#c00;font-size:13px;line-height:1;cursor:pointer;padding:0 2px;display:none;font-weight:700; }
+.info-row:hover .btn-remove-info { display:inline; }
+.info-text-verde    { color:var(--verde-text); }
+.info-text-amarelo  { color:var(--amarelo-text); }
+.info-text-roxo     { color:var(--roxo-text); }
+.info-text-vermelho { color:var(--vermelho-text); }
+.info-text-cinza    { color:#444; }
+.info-text-reforma  { color:#555; }
+
+.status-popup { position:fixed;background:white;border:1.5px solid #ccc;border-radius:10px;padding:8px;box-shadow:0 6px 20px rgba(0,0,0,0.18);z-index:1000;display:none;flex-direction:column;gap:5px;min-width:190px; }
+.pop-title { font-size:10px;color:#888;font-weight:700;padding:0 4px 4px;border-bottom:1px solid #eee;margin-bottom:2px; }
+.pop-btn { font-size:12px;padding:6px 12px;border-radius:6px;border:none;cursor:pointer;text-align:left;font-weight:700;display:flex;align-items:center;gap:8px;transition:opacity .1s; }
+.pop-btn:hover { opacity:.82; }
+.pop-verde    { background:var(--verde-bg);   color:var(--verde-text); }
+.pop-amarelo  { background:var(--amarelo-bg); color:var(--amarelo-text); }
+.pop-roxo     { background:var(--roxo-bg);    color:var(--roxo-text); }
+.pop-vermelho { background:var(--vermelho-bg);color:var(--vermelho-text); }
+.pop-dot { width:13px;height:13px;border-radius:50%;flex-shrink:0; }
+
+.area-color-btns { display:flex;gap:4px;align-items:center;flex-direction:column;justify-content:center;padding:0 8px; }
+.acb { width:20px;height:20px;border-radius:50%;border:2.5px solid rgba(255,255,255,0.5);cursor:pointer;transition:transform .12s,border-color .12s;display:flex;align-items:center;justify-content:center;font-size:8px;color:white;font-weight:900;flex-shrink:0; }
+.acb:hover { transform:scale(1.35);border-color:white; }
+.acb-verde    { background:var(--verde-header); }
+.acb-amarelo  { background:var(--amarelo-header); }
+.acb-roxo     { background:var(--roxo-header); }
+.acb-vermelho { background:var(--vermelho-header); }
+
+.area-label-vermelho { background:var(--vermelho-header); }
+.area-label-verde    { background:var(--verde-header); }
+.area-label-amarelo  { background:var(--amarelo-header); }
+.area-label-roxo     { background:var(--roxo-header); }
+.area-label-cinza    { background:#6b6b6b; }
+.area-border-vermelho { border-color:var(--vermelho-border); }
+.area-border-verde    { border-color:var(--verde-border); }
+.area-border-amarelo  { border-color:var(--amarelo-border); }
+.area-border-roxo     { border-color:var(--roxo-border); }
+
+.sep { height:1px;background:#e0e0d8;margin:10px 0 16px; }
+
+.areas-externas { margin-top:8px; }
+.area-card { display:flex;border:2px solid #c8c8be;border-radius:10px;overflow:hidden;margin-bottom:10px;background:#fff; }
+.area-label { width:88px;flex-shrink:0;display:flex;align-items:center;justify-content:center;text-align:center;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:white;padding:10px 6px;line-height:1.4; }
+.label-vermelho { background:var(--vermelho-header); }
+.label-verde    { background:var(--verde-header); }
+.area-content { padding:10px 14px;flex:1; }
+.area-content strong { display:block;font-size:12px;font-weight:700;margin-bottom:4px;color:#333; }
+.area-content [contenteditable] { font-size:12px;color:#444;outline:none;border-bottom:1px dashed transparent;transition:border-color .15s;line-height:1.5; }
+.area-content [contenteditable]:focus { border-color:#1a5276; }
+
+@media print {
+  body { background:white;padding:0; }
+  .page { box-shadow:none;border-radius:0; }
+  .toolbar,.btn-add,.btn-add-info,.btn-remove,.btn-remove-info,.quarto-color-btns,.status-popup,.area-color-btns { display:none !important; }
+}
+.pdf-export-hide { display:none !important; }
+.tbtn-save { background:#2e7d42; border-color:#2e7d42; }
+.tbtn-save:hover { background:#1a5e2a; }
+.tbtn-save.saved { background:#1a5e2a; }
+.save-toast { position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#2e7d42;color:white;font-size:13px;font-weight:700;padding:10px 24px;border-radius:24px;box-shadow:0 4px 16px rgba(0,0,0,0.2);opacity:0;transition:opacity .3s;pointer-events:none;z-index:9999; }
+.save-toast.show { opacity:1; }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <div class="sigla-logo">CISF</div>
+    <div>
+      <h1>Mapa de Monitoramento e Isolamento – ILPI</h1>
+      <small>Centro de Idosos Sagrada Família &nbsp;|&nbsp; Ala Feminina e Masculina</small>
+    </div>
+    <div class="data-box">Data: <span id="data-display" contenteditable="true"></span></div>
+  </div>
+
+  <div class="toolbar">
+    <span class="toolbar-hint">🎨 Clique nos círculos coloridos no cabeçalho do quarto para mudar a cor. Clique no ícone ao lado do nome para status individual.</span>
+    <button class="tbtn tbtn-save" id="btn-save" onclick="salvarAlteracoes()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+      Salvar
+    </button>
+    <button class="tbtn" id="btn-pdf" onclick="exportarPDF()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+      Exportar PDF
+    </button>
+    <button class="tbtn" id="btn-img" onclick="salvarImagem()" style="background:#7b3fa0;">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      Salvar Imagem
+    </button>
+  </div>
+
+  <div class="legenda">
+    <span class="legenda-title">Legenda:</span>
+    <div class="leg-item leg-verde">
+      <div class="leg-icon leg-icon-verde">✓</div>
+      <span class="leg-text" contenteditable="true" id="leg-verde-txt">Verde – Assintomático · Precaução de Gotículas</span>
+    </div>
+    <div class="leg-item leg-amarelo">
+      <div class="leg-icon leg-icon-amarelo">!</div>
+      <span class="leg-text" contenteditable="true" id="leg-amarelo-txt">Amarelo – Sintomático/Suspeito · Gotículas + Contato</span>
+    </div>
+    <div class="leg-item leg-roxo">
+      <div class="leg-icon leg-icon-roxo">C</div>
+      <span class="leg-text" contenteditable="true" id="leg-roxo-txt">Roxo – Assint. Contactante · Gotículas + Contato</span>
+    </div>
+    <div class="leg-item leg-vermelho">
+      <div class="leg-icon leg-icon-vermelho">✕</div>
+      <span class="leg-text" contenteditable="true" id="leg-vermelho-txt">Vermelho – Confirmado/Sint. Contactante · Precaução conforme vírus</span>
+    </div>
+  </div>
+
+  <div class="section-title">Ala Feminina</div>
+  <div class="grid-quartos" id="grid-feminina"></div>
+  <div class="sep"></div>
+
+  <div class="section-title">Ala Masculina</div>
+  <div class="grid-quartos" id="grid-masculina"></div>
+
+  <div class="section-title" style="margin-top:8px;">Áreas Externas e Família</div>
+  <div class="areas-externas" id="areas-externas"></div>
+</div>
+
+<div class="status-popup" id="status-popup">
+  <div class="pop-title">Alterar status do residente</div>
+  <button class="pop-btn pop-verde"    onclick="aplicarStatus('verde')">   <span class="pop-dot" style="background:var(--verde-header)"></span>Verde – Assintomático</button>
+  <button class="pop-btn pop-amarelo"  onclick="aplicarStatus('amarelo')"> <span class="pop-dot" style="background:var(--amarelo-header)"></span>Amarelo – Sint./Suspeito</button>
+  <button class="pop-btn pop-roxo"     onclick="aplicarStatus('roxo')">    <span class="pop-dot" style="background:var(--roxo-header)"></span>Roxo – Contactante</button>
+  <button class="pop-btn pop-vermelho" onclick="aplicarStatus('vermelho')"><span class="pop-dot" style="background:var(--vermelho-header)"></span>Vermelho – Confirmado</button>
+</div>
+
+<script>
+const FEMININA = [
+  {num:'01',status:'verde',residentes:[{nome:'Vencaslina',status:'verde'},{nome:'Maria Gentil',status:'verde'},{nome:'Floripa',status:'verde'}]},
+  {num:'02',status:'verde',residentes:[{nome:'Dima',status:'verde'},{nome:'Maria Noleto',status:'verde'},{nome:'Maria das Dores',status:'verde'}]},
+  {num:'03',status:'verde',residentes:[{nome:'Maria Célia',status:'verde'},{nome:'Sandra Segati',status:'verde'},{nome:'VAGO',status:'vago'}]},
+  {num:'04',status:'verde',residentes:[{nome:'Alexandrina',status:'verde'},{nome:'VAGO',status:'vago'},{nome:'Maria Luiza',status:'verde'}]},
+  {num:'05',status:'reforma',reforma:true},
+  {num:'06',status:'reforma',reforma:true},
+  {num:'07',status:'verde',residentes:[{nome:'Anisia',status:'verde'},{nome:'Ana Francisca',status:'verde'},{nome:'Sebastiana',status:'verde'}]},
+  {num:'08',status:'verde',residentes:[{nome:'Maria Marinho',status:'verde'},{nome:'Maria Silva',status:'verde'},{nome:'Erenilde',status:'verde'},{nome:'Jovelina',status:'verde'}]},
+  {num:'09',status:'verde',residentes:[{nome:'Maria Pereira',status:'verde'},{nome:'Doraci',status:'verde'},{nome:'Maria Conceição',status:'verde'},{nome:'Gercira',status:'verde'}]},
+  {num:'10',status:'verde',residentes:[{nome:'Ana Rosa',status:'verde'},{nome:'Raimunda',status:'verde'},{nome:'Iracema',status:'verde'}]},
+  {num:'11',status:'verde',residentes:[{nome:'Odilia',status:'verde'},{nome:'VAGO',status:'vago'},{nome:'Esmeralda',status:'verde'}]},
+  {num:'12',status:'verde',residentes:[{nome:'Lucimar',status:'verde'},{nome:'Glória',status:'verde'},{nome:"Maria D'Abadia",status:'verde'}]}
+];
+
+const MASCULINA = [
+  {num:'01',status:'verde',residentes:[{nome:'Martinho',status:'verde'},{nome:'Antônio Pinto',status:'verde'},{nome:'Glaucio',status:'verde'},{nome:'Luis Carlos',status:'verde'}]},
+  {num:'02',status:'verde',residentes:[{nome:'Hundinair',status:'verde'},{nome:'Carlos Menezes',status:'verde'},{nome:'Benicio',status:'verde'}]},
+  {num:'03',status:'verde',residentes:[{nome:'Carlos Barbosa',status:'verde'},{nome:'José Pereira',status:'verde'},{nome:'João Severiano',status:'verde'},{nome:'Paulo Alves',status:'verde'}]},
+  {num:'04',status:'verde',residentes:[{nome:'Joaquim',status:'verde'},{nome:'Manoel Pereira Silva',status:'verde'},{nome:'Manoel Crispim',status:'verde'}]},
+  {num:'05',status:'verde',residentes:[{nome:'Adenir',status:'verde'},{nome:'Orides',status:'verde'},{nome:'Nestor',status:'verde'}]},
+  {num:'06',status:'verde',residentes:[{nome:'Manoel Francisco',status:'verde'},{nome:'Wilson Ferreira',status:'verde'},{nome:'Jeilton',status:'verde'}]},
+  {num:'07',status:'roxo', residentes:[{nome:'Antônio Ribeiro',status:'roxo'},{nome:'Sintomático Contactante',status:'roxo'}]},
+  {num:'08',status:'verde',residentes:[{nome:'Neivaldo',status:'verde'},{nome:'Raimundo',status:'verde'},{nome:'Wilson Neres',status:'verde'}]},
+  {num:'09',status:'vermelho',residentes:[{nome:'Arenaldo',status:'vermelho'},{nome:'Confirmado – Metapneumovírus',status:'vermelho'}]},
+  {num:'10',status:'cinza',residentes:[]},
+  {num:'11',status:'cinza',residentes:[]},
+  {num:'12',status:'cinza',residentes:[]}
+];
+
+const ICONS = {verde:'✓',amarelo:'!',roxo:'C',vermelho:'✕',vago:'–',cinza:'–'};
+const ICLS  = {verde:'icon-verde',amarelo:'icon-amarelo',roxo:'icon-roxo',vermelho:'icon-vermelho',vago:'icon-vago',cinza:'icon-vago'};
+
+let popupTarget = null;
+
+function dominantStatus(q) {
+  if (q.reforma) return 'reforma';
+  if (!q.residentes || !q.residentes.length) return q.status || 'cinza';
+  for (const p of ['vermelho','roxo','amarelo','verde']) {
+    if (q.residentes.some(r => r.status === p)) return p;
+  }
+  return q.status || 'cinza';
+}
+
+function buildQuarto(q, ala) {
+  const st = q.reforma ? 'reforma' : (q.status || 'cinza');
+  const hcls = 'qh-' + st;
+  const bcls = 'qbody-' + st;
+  const border = (st==='reforma'||st==='cinza') ? '' : 'qborder-' + st;
+
+  const colorBtns = `<div class="quarto-color-btns">
+    <div class="qc-btn qcb-verde"    title="Verde"    onclick="mudarQuarto(event,'${ala}','${q.num}','verde')">✓</div>
+    <div class="qc-btn qcb-amarelo"  title="Amarelo"  onclick="mudarQuarto(event,'${ala}','${q.num}','amarelo')">!</div>
+    <div class="qc-btn qcb-roxo"     title="Roxo"     onclick="mudarQuarto(event,'${ala}','${q.num}','roxo')">C</div>
+    <div class="qc-btn qcb-vermelho" title="Vermelho" onclick="mudarQuarto(event,'${ala}','${q.num}','vermelho')">✕</div>
+    <div class="qc-btn qcb-cinza"    title="Vago/Sem status" onclick="mudarQuarto(event,'${ala}','${q.num}','cinza')">–</div>
+  </div>`;
+
+  const header = `<div class="quarto-header ${hcls}">
+    <div class="qh-left">
+      <div class="quarto-label">Quarto</div>
+      <div class="quarto-num">${q.num}</div>
+    </div>
+    ${colorBtns}
+  </div>`;
+
+  let body;
+  if (q.reforma) {
+    body = `<div class="quarto-body ${bcls}"><em style="color:#666;font-size:12px;padding:4px 0;display:block;">Em reforma</em></div>`;
+  } else {
+    const rows = (q.residentes||[]).map((r,i) => {
+      const ic = ICLS[r.status]||'icon-vago';
+      const icoTxt = ICONS[r.status]||'?';
+      const dis = r.status==='vago' ? 'disabled' : '';
+      return `<div class="residente-row">
+        <div class="status-icon ${ic}" title="Alterar status individual" onclick="abrirPopup(event,'${ala}','${q.num}',${i})">${icoTxt}</div>
+        <input class="residente-nome" value="${r.nome.replace(/"/g,'&quot;')}" ${dis} onchange="updateNome('${ala}','${q.num}',${i},this.value)">
+        <button class="btn-remove" title="Remover" onclick="removerRes('${ala}','${q.num}',${i})">✕</button>
+      </div>`;
+    }).join('');
+    const infoColorCls = 'info-text-' + (st==='reforma'?'reforma':(st==='cinza'?'cinza':st));
+    const infos = (q.infos||[]).map((info,i) => `<div class="info-row">
+        <textarea class="info-text ${infoColorCls}" rows="1" onchange="updateInfo('${ala}','${q.num}',${i},this.value)" oninput="this.rows=Math.max(1,Math.ceil(this.value.length/28))">${info}</textarea>
+        <button class="btn-remove-info" title="Remover info" onclick="removerInfo('${ala}','${q.num}',${i})">✕</button>
+      </div>`).join('');
+    body = `<div class="quarto-body ${bcls}">
+      ${rows}
+      <button class="btn-add" onclick="addRes('${ala}','${q.num}')">+ Adicionar residente</button>
+      ${infos}
+      <button class="btn-add-info" onclick="addInfo('${ala}','${q.num}')">+ Adicionar informação</button>
+    </div>`;
+  }
+
+  return `<div class="quarto ${border}" id="q-${ala}-${q.num}">${header}${body}</div>`;
+}
+
+function render(ala) {
+  const data = ala==='feminina' ? FEMININA : MASCULINA;
+  document.getElementById('grid-'+ala).innerHTML = data.map(q => buildQuarto(q,ala)).join('');
+}
+function getArr(ala) { return ala==='feminina' ? FEMININA : MASCULINA; }
+function getQ(ala,num) { return getArr(ala).find(q=>q.num===num); }
+
+function mudarQuarto(e,ala,num,novoSt) {
+  e.stopPropagation();
+  const q = getQ(ala,num);
+
+  // Se o quarto estava em reforma, retira da reforma ao mudar o status
+  // e garante que exista um array de residentes para edição.
+  if (q.reforma) {
+    q.reforma = false;
+    if (!q.residentes) q.residentes = [];
+  }
+
+  q.status = novoSt;
+  if (q.residentes && novoSt!=='cinza') {
+    q.residentes.forEach(r=>{ if(r.status!=='vago') r.status=novoSt; });
+  }
+  render(ala);
+}
+
+function updateNome(ala,num,idx,val) { getQ(ala,num).residentes[idx].nome=val; }
+
+function addRes(ala,num) {
+  const q=getQ(ala,num);
+  if(!q.residentes) q.residentes=[];
+  q.residentes.push({nome:'Novo residente',status:q.status||'verde'});
+  render(ala);
+}
+
+function removerRes(ala,num,idx) {
+  getQ(ala,num).residentes.splice(idx,1);
+  render(ala);
+}
+
+function addInfo(ala,num) {
+  const q=getQ(ala,num);
+  if(!q.infos) q.infos=[];
+  q.infos.push('Nova informação');
+  render(ala);
+}
+
+function removerInfo(ala,num,idx) {
+  const q=getQ(ala,num);
+  q.infos.splice(idx,1);
+  render(ala);
+}
+
+function updateInfo(ala,num,idx,val) {
+  const q=getQ(ala,num);
+  if(!q.infos) q.infos=[];
+  q.infos[idx]=val;
+}
+
+function abrirPopup(e,ala,num,idx) {
+  e.stopPropagation();
+  popupTarget={ala,num,idx};
+  const pop=document.getElementById('status-popup');
+  pop.style.display='flex';
+  const x=Math.min(e.clientX+10,window.innerWidth-210);
+  const y=Math.min(e.clientY+10,window.innerHeight-190);
+  pop.style.left=x+'px'; pop.style.top=y+'px';
+}
+
+function aplicarStatus(st) {
+  if(!popupTarget) return;
+  const {ala,num,idx}=popupTarget;
+  const q=getQ(ala,num);
+  q.residentes[idx].status=st;
+  q.status=dominantStatus(q);
+  render(ala);
+  fecharPopup();
+}
+
+function fecharPopup() {
+  document.getElementById('status-popup').style.display='none';
+  popupTarget=null;
+}
+document.addEventListener('click', e=>{
+  if(!document.getElementById('status-popup').contains(e.target)) fecharPopup();
+});
+
+async function exportarPDF() {
+  const btn = document.getElementById('btn-pdf');
+  btn.disabled = true;
+  btn.textContent = 'Gerando PDF...';
+
+  // A4 portrait at 96dpi: 210mm x 297mm = 794px x 1123px
+  const PDF_W_MM = 210;
+  const PDF_H_MM = 297;
+  const PDF_W_PX = 794;
+  const PDF_H_PX = 1123;
+  const MARGIN_MM = 8; // 8mm margin on all sides
+
+  // Hide interactive UI
+  document.querySelectorAll('.toolbar,.btn-add,.btn-add-info,.btn-remove,.btn-remove-info,.quarto-color-btns,.status-popup,.area-color-btns').forEach(el => el.classList.add('pdf-export-hide'));
+
+  // Replace inputs with spans — html2canvas ignores input values
+  const inputs = document.querySelectorAll('input.residente-nome');
+  const inputData = [];
+  inputs.forEach(inp => {
+    const span = document.createElement('span');
+    span.textContent = inp.value;
+    span.style.cssText = 'font-size:11px;font-weight:600;flex:1;color:#222;white-space:normal;word-break:break-word;display:block;line-height:1.3;min-width:0;';
+    inp.parentNode.insertBefore(span, inp);
+    inp.style.display = 'none';
+    inputData.push({ inp, span });
+  });
+
+  const pageEl = document.querySelector('.page');
+  const orig = {
+    padding: pageEl.style.padding, maxWidth: pageEl.style.maxWidth,
+    borderRadius: pageEl.style.borderRadius, boxShadow: pageEl.style.boxShadow,
+    width: pageEl.style.width, margin: pageEl.style.margin,
+    position: pageEl.style.position
+  };
+  const bodyOrig = {
+    padding: document.body.style.padding, background: document.body.style.background,
+    overflow: document.body.style.overflow, width: document.body.style.width
+  };
+
+  // Set page to A4 portrait width exactly, let height be natural
+  pageEl.style.position = 'absolute';
+  pageEl.style.top = '0';
+  pageEl.style.left = '0';
+  pageEl.style.maxWidth = 'none';
+  pageEl.style.width = PDF_W_PX + 'px';
+  pageEl.style.borderRadius = '0';
+  pageEl.style.boxShadow = 'none';
+  pageEl.style.padding = '12px';
+  pageEl.style.margin = '0';
+  document.body.style.padding = '0';
+  document.body.style.background = '#fff';
+  document.body.style.overflow = 'visible';
+  document.body.style.width = PDF_W_PX + 'px';
+
+  // Wait for reflow
+  await new Promise(r => setTimeout(r, 250));
+
+  try {
+    const naturalH = pageEl.scrollHeight;
+
+    // Capture the full content at A4 width
+    const canvas = await html2canvas(pageEl, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: '#ffffff',
+      logging: false,
+      width: PDF_W_PX,
+      height: naturalH,
+      windowWidth: PDF_W_PX,
+      windowHeight: naturalH,
+      scrollX: 0,
+      scrollY: 0
+    });
+
+    const { jsPDF } = window.jspdf;
+    const imgData = canvas.toDataURL('image/png');
+    const imgW = canvas.width;
+    const imgH = canvas.height;
+
+    // Available area inside margins
+    const availW = PDF_W_MM - MARGIN_MM * 2;
+    const availH = PDF_H_MM - MARGIN_MM * 2;
+
+    // Scale to fit available area, preserve aspect ratio
+    let finalW = availW;
+    let finalH = (imgH / imgW) * finalW;
+    if (finalH > availH) {
+      finalH = availH;
+      finalW = (imgW / imgH) * finalH;
+    }
+
+    const offsetX = (PDF_W_MM - finalW) / 2;
+    const offsetY = (PDF_H_MM - finalH) / 2;
+
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    doc.addImage(imgData, 'PNG', offsetX, offsetY, finalW, finalH);
+
+    const dataStr = document.getElementById('data-display').textContent.replace(/\//g,'-') || 'mapa';
+    doc.save('PAINEL_MONITORAMENTO_CISF_' + dataStr + '.pdf');
+  } catch(err) {
+    alert('Erro ao gerar PDF. Tente novamente.');
+    console.error(err);
+  }
+
+  // Restore everything
+  pageEl.style.position = orig.position;
+  pageEl.style.top = '';
+  pageEl.style.left = '';
+  pageEl.style.padding = orig.padding;
+  pageEl.style.maxWidth = orig.maxWidth;
+  pageEl.style.borderRadius = orig.borderRadius;
+  pageEl.style.boxShadow = orig.boxShadow;
+  pageEl.style.width = orig.width;
+  pageEl.style.margin = orig.margin;
+  document.body.style.padding = bodyOrig.padding;
+  document.body.style.background = bodyOrig.background;
+  document.body.style.overflow = bodyOrig.overflow;
+  document.body.style.width = bodyOrig.width;
+
+  inputData.forEach(({ inp, span }) => { inp.style.display = ''; span.remove(); });
+  document.querySelectorAll('.pdf-export-hide').forEach(el => el.classList.remove('pdf-export-hide'));
+
+  btn.disabled = false;
+  btn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg> Exportar PDF`;
+}
+
+async function salvarImagem() {
+  const btn = document.getElementById('btn-img');
+  btn.disabled = true;
+  btn.textContent = 'Gerando...';
+
+  document.querySelectorAll('.toolbar,.btn-add,.btn-add-info,.btn-remove,.btn-remove-info,.quarto-color-btns,.status-popup,.area-color-btns').forEach(el => el.classList.add('pdf-export-hide'));
+
+  const inputs = document.querySelectorAll('input.residente-nome');
+  const inputData = [];
+  inputs.forEach(inp => {
+    const span = document.createElement('span');
+    span.textContent = inp.value;
+    span.style.cssText = 'font-size:11px;font-weight:600;flex:1;color:#222;white-space:normal;word-break:break-word;display:block;line-height:1.3;min-width:0;';
+    inp.parentNode.insertBefore(span, inp);
+    inp.style.display = 'none';
+    inputData.push({ inp, span });
+  });
+
+  const pageEl = document.querySelector('.page');
+  const orig = {
+    padding: pageEl.style.padding, maxWidth: pageEl.style.maxWidth,
+    borderRadius: pageEl.style.borderRadius, boxShadow: pageEl.style.boxShadow,
+    width: pageEl.style.width, margin: pageEl.style.margin, position: pageEl.style.position
+  };
+  const bodyOrig = { padding: document.body.style.padding, background: document.body.style.background, overflow: document.body.style.overflow, width: document.body.style.width };
+
+  pageEl.style.position = 'absolute';
+  pageEl.style.top = '0'; pageEl.style.left = '0';
+  pageEl.style.maxWidth = 'none'; pageEl.style.width = '980px';
+  pageEl.style.borderRadius = '0'; pageEl.style.boxShadow = 'none';
+  pageEl.style.padding = '16px'; pageEl.style.margin = '0';
+  document.body.style.padding = '0'; document.body.style.background = '#fff';
+  document.body.style.overflow = 'visible'; document.body.style.width = '980px';
+
+  await new Promise(r => setTimeout(r, 250));
+
+  try {
+    const naturalH = pageEl.scrollHeight;
+    const canvas = await html2canvas(pageEl, {
+      scale: 2, useCORS: true, backgroundColor: '#ffffff', logging: false,
+      width: 980, height: naturalH, windowWidth: 980, windowHeight: naturalH, scrollX: 0, scrollY: 0
+    });
+    const a = document.createElement('a');
+    const dataStr = document.getElementById('data-display').textContent.replace(/\//g,'-') || 'mapa';
+    a.download = 'PAINEL_MONITORAMENTO_CISF_' + dataStr + '.png';
+    a.href = canvas.toDataURL('image/png');
+    a.click();
+  } catch(err) {
+    alert('Erro ao gerar imagem. Tente novamente.');
+    console.error(err);
+  }
+
+  pageEl.style.position = orig.position; pageEl.style.top = ''; pageEl.style.left = '';
+  pageEl.style.padding = orig.padding; pageEl.style.maxWidth = orig.maxWidth;
+  pageEl.style.borderRadius = orig.borderRadius; pageEl.style.boxShadow = orig.boxShadow;
+  pageEl.style.width = orig.width; pageEl.style.margin = orig.margin;
+  document.body.style.padding = bodyOrig.padding; document.body.style.background = bodyOrig.background;
+  document.body.style.overflow = bodyOrig.overflow; document.body.style.width = bodyOrig.width;
+
+  inputData.forEach(({ inp, span }) => { inp.style.display = ''; span.remove(); });
+  document.querySelectorAll('.pdf-export-hide').forEach(el => el.classList.remove('pdf-export-hide'));
+
+  btn.disabled = false;
+  btn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Salvar Imagem`;
+}
+
+function salvarAlteracoes() {
+  // Sync editable text fields back into data before saving
+  AREAS.forEach(a => {
+    const el = document.getElementById(a.id + '-texto');
+    if (el) a.texto = el.textContent;
+    const tit = document.getElementById('atitulo-' + a.id);
+    if (tit) a.titulo = tit.textContent.replace(/\s*\(.*\)$/, '').trim();
+  });
+
+  const dados = {
+    data: document.getElementById('data-display').textContent,
+    feminina: FEMININA,
+    masculina: MASCULINA,
+    areas: AREAS,
+    centroDia: document.getElementById('centro-dia-texto') ? document.getElementById('centro-dia-texto').textContent : '',
+    casaFamiliar: document.getElementById('casa-familiar-texto') ? document.getElementById('casa-familiar-texto').textContent : '',
+    legenda: {
+      verde:    document.getElementById('leg-verde-txt')    ? document.getElementById('leg-verde-txt').textContent    : '',
+      amarelo:  document.getElementById('leg-amarelo-txt')  ? document.getElementById('leg-amarelo-txt').textContent  : '',
+      roxo:     document.getElementById('leg-roxo-txt')     ? document.getElementById('leg-roxo-txt').textContent     : '',
+      vermelho: document.getElementById('leg-vermelho-txt') ? document.getElementById('leg-vermelho-txt').textContent : ''
+    }
+  };
+  try {
+    localStorage.setItem('ilpi_mapa', JSON.stringify(dados));
+    const toast = document.getElementById('save-toast');
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2500);
+  } catch(e) {
+    alert('Não foi possível salvar. O armazenamento local pode estar desabilitado neste navegador.');
+  }
+}
+
+function carregarAlteracoes() {
+  try {
+    const raw = localStorage.getItem('ilpi_mapa');
+    if (!raw) return false;
+    const d = JSON.parse(raw);
+    if (d.data) document.getElementById('data-display').textContent = d.data;
+    if (d.feminina) FEMININA.splice(0, FEMININA.length, ...d.feminina);
+    if (d.masculina) MASCULINA.splice(0, MASCULINA.length, ...d.masculina);
+    if (d.areas) AREAS.splice(0, AREAS.length, ...d.areas);
+    if (d.legenda) {
+      ['verde','amarelo','roxo','vermelho'].forEach(c => {
+        const el = document.getElementById('leg-' + c + '-txt');
+        if (el && d.legenda[c]) el.textContent = d.legenda[c];
+      });
+    }
+    return true;
+  } catch(e) { return false; }
+}
+
+document.getElementById('data-display').textContent =
+  new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'});
+
+// AREAS EXTERNAS
+const AREAS = [
+  { id:'centro-dia', label:'CENTRO DIA', status:'vermelho',
+    titulo:'Centro Dia', texto:'Albertina – Diagnosticada com Metapneumovírus + COVID-19. Precaução de aerossóis e contato.' },
+  { id:'casa-familiar', label:'CASA DO FAMILIAR', status:'verde',
+    titulo:'Casa da Família', texto:'Valdira (Qt 12) e João Fortunato (Qt 04) – Ambos assintomáticos com Precaução Padrão.' }
+];
+
+const STATUS_LABEL_AREA = {verde:'Monitoramento Verde',amarelo:'Sint./Suspeito',roxo:'Contactante',vermelho:'Isolamento Vermelho',cinza:'Sem status'};
+
+function buildArea(a) {
+  const st = a.status || 'cinza';
+  return `<div class="area-card area-border-${st}" id="acard-${a.id}">
+    <div class="area-label area-label-${st}" id="alabel-${a.id}">${a.label}</div>
+    <div class="area-content">
+      <strong id="atitulo-${a.id}">${a.titulo} (${STATUS_LABEL_AREA[st]})</strong>
+      <div contenteditable="true" id="${a.id}-texto">${a.texto}</div>
+    </div>
+    <div class="area-color-btns">
+      <div class="acb acb-verde"    title="Verde"    onclick="mudarArea('${a.id}','verde')">✓</div>
+      <div class="acb acb-amarelo"  title="Amarelo"  onclick="mudarArea('${a.id}','amarelo')">!</div>
+      <div class="acb acb-roxo"     title="Roxo"     onclick="mudarArea('${a.id}','roxo')">C</div>
+      <div class="acb acb-vermelho" title="Vermelho" onclick="mudarArea('${a.id}','vermelho')">✕</div>
+    </div>
+  </div>`;
+}
+
+function renderAreas() {
+  document.getElementById('areas-externas').innerHTML = AREAS.map(buildArea).join('');
+}
+
+function mudarArea(id, novoSt) {
+  const a = AREAS.find(x => x.id === id);
+  a.status = novoSt;
+  // update card border
+  const card = document.getElementById('acard-' + id);
+  card.className = 'area-card area-border-' + novoSt;
+  // update label bg
+  const label = document.getElementById('alabel-' + id);
+  label.className = 'area-label area-label-' + novoSt;
+  // update title
+  document.getElementById('atitulo-' + id).textContent = a.titulo + ' (' + STATUS_LABEL_AREA[novoSt] + ')';
+}
+
+carregarAlteracoes();
+renderAreas();
+render('feminina');
+render('masculina');
+</script>
+<div class="save-toast" id="save-toast">✓ Alterações salvas!</div>
+</body>
+</html>

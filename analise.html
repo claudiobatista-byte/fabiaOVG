@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análise Epidemiológica - CISF</title>
+    <style>
+        :root {
+            --rosa: #D94A9E;
+            --roxo: #6B4C9A;
+            --amarelo: #F0C944;
+            --azul-escuro: #2C3E50;
+            --cinza-claro: #F8FAFB;
+            --cinza-border: #E8EAED;
+            --branco: #FFFFFF;
+            --shadow-soft: 0 2px 12px rgba(0,0,0,0.08);
+            --shadow-medium: 0 8px 24px rgba(0,0,0,0.12);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, #F8FAFB 0%, #FFFFFF 100%);
+            color: var(--azul-escuro);
+            line-height: 1.6;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* ========== HEADER SECTION ========== */
+        .header-section {
+            background: linear-gradient(135deg, var(--roxo) 0%, var(--rosa) 50%, var(--roxo) 100%);
+            color: var(--branco);
+            padding: 3rem 2rem;
+            border-radius: 12px;
+            margin-bottom: 3rem;
+            box-shadow: var(--shadow-medium);
+            text-align: center;
+        }
+
+        .header-section h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.5px;
+        }
+
+        .header-section .subtitle {
+            font-size: 1rem;
+            color: var(--amarelo);
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            margin-bottom: 1rem;
+        }
+
+        .header-section .period {
+            font-size: 0.95rem;
+            opacity: 0.95;
+            margin-bottom: 1.5rem;
+        }
+
+        .header-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .stat-item {
+            background: rgba(255,255,255,0.1);
+            padding: 1.5rem;
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--amarelo);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* ========== SECTION STYLING ========== */
+        section {
+            margin-bottom: 3rem;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .section-header h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--roxo);
+            flex-grow: 1;
+        }
+
+        .accent-bar {
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--rosa), var(--amarelo));
+            border-radius: 2px;
+        }
+
+        /* ========== TABLES ========== */
+        .table-wrapper {
+            overflow-x: auto;
+            margin-bottom: 2rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--branco);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--shadow-soft);
+        }
+
+        thead {
+            background: linear-gradient(135deg, rgba(107,76,154,0.95), rgba(217,74,158,0.95));
+            color: var(--branco);
+        }
+
+        th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 0.3px;
+            border-bottom: 2px solid var(--cinza-border);
+        }
+
+        td {
+            padding: 0.875rem 1rem;
+            border-bottom: 1px solid var(--cinza-border);
+            font-size: 0.95rem;
+        }
+
+        tbody tr {
+            transition: var(--transition);
+        }
+
+        tbody tr:hover {
+            background: rgba(217,74,158,0.05);
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Alternating row colors */
+        tbody tr:nth-child(odd) {
+            background: rgba(240,201,68,0.02);
+        }
+
+        .numeric {
+            text-align: right;
+            font-weight: 500;
+            color: var(--roxo);
+        }
+
+        .percentage {
+            color: var(--rosa);
+            font-weight: 600;
+        }
+
+        /* ========== GRID LAYOUTS ========== */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: var(--branco);
+            border: 1px solid var(--cinza-border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-soft);
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-medium);
+            border-color: var(--rosa);
+            transform: translateY(-2px);
+        }
+
+        .card-title {
+            color: var(--roxo);
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+
+        .card-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--rosa);
+            margin-bottom: 0.5rem;
+        }
+
+        .card-desc {
+            color: #666;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        /* ========== CAUSES GRID ========== */
+        .causes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .cause-item {
+            background: linear-gradient(135deg, rgba(107,76,154,0.05), rgba(217,74,158,0.05));
+            padding: 1.25rem;
+            border-left: 4px solid var(--rosa);
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+
+        .cause-item:hover {
+            background: linear-gradient(135deg, rgba(107,76,154,0.1), rgba(217,74,158,0.1));
+            border-left-color: var(--amarelo);
+        }
+
+        .cause-name {
+            font-weight: 600;
+            color: var(--roxo);
+            margin-bottom: 0.5rem;
+        }
+
+        .cause-freq {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--rosa);
+        }
+
+        .cause-count {
+            font-size: 0.85rem;
+            color: #999;
+            margin-top: 0.5rem;
+        }
+
+        /* ========== AGE DISTRIBUTION ========== */
+        .age-group {
+            display: flex;
+            align-items: flex-end;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .age-label {
+            width: 80px;
+            font-weight: 600;
+            color: var(--roxo);
+        }
+
+        .age-bar-container {
+            flex-grow: 1;
+            height: 40px;
+            background: var(--cinza-claro);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .age-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--rosa), var(--roxo));
+            border-radius: 4px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 1rem;
+            color: var(--branco);
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        /* ========== TIMELINE ========== */
+        .timeline {
+            position: relative;
+            padding: 2rem 0;
+        }
+
+        .timeline-item {
+            display: grid;
+            grid-template-columns: 120px 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .timeline-year {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--roxo);
+            position: relative;
+            padding-top: 0.5rem;
+        }
+
+        .timeline-year::before {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background: var(--rosa);
+            border: 3px solid var(--branco);
+            border-radius: 50%;
+            left: -36px;
+            top: 1rem;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .timeline-content {
+            background: var(--branco);
+            padding: 1.5rem;
+            border-left: 2px solid var(--cinza-border);
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+
+        .timeline-content:hover {
+            border-left-color: var(--rosa);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .timeline-stat {
+            font-weight: 600;
+            color: var(--rosa);
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-desc {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        /* ========== HIGHLIGHTS ========== */
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(217,74,158,0.1), rgba(240,201,68,0.1));
+            border: 1px solid rgba(217,74,158,0.3);
+            border-left: 4px solid var(--rosa);
+            padding: 2rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+        }
+
+        .highlight-box h3 {
+            color: var(--roxo);
+            margin-bottom: 1rem;
+        }
+
+        .highlight-box p {
+            color: #333;
+            line-height: 1.8;
+        }
+
+        /* ========== RECOMMENDATIONS ========== */
+        .recommendations {
+            background: var(--branco);
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: var(--shadow-soft);
+            margin-top: 2rem;
+        }
+
+        .recommendation-item {
+            display: grid;
+            grid-template-columns: 40px 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--cinza-border);
+        }
+
+        .recommendation-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .rec-number {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--rosa), var(--roxo));
+            color: var(--branco);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .rec-content h4 {
+            color: var(--roxo);
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .rec-content p {
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* ========== METHODOLOGY ========== */
+        .methodology {
+            background: linear-gradient(135deg, rgba(107,76,154,0.05), rgba(240,201,68,0.05));
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 2rem;
+        }
+
+        .methodology h4 {
+            color: var(--roxo);
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .methodology ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .methodology li {
+            padding: 0.5rem 0;
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .methodology li::before {
+            content: '▸ ';
+            color: var(--rosa);
+            font-weight: 700;
+            margin-right: 0.5rem;
+        }
+
+        /* ========== FOOTER ========== */
+        footer {
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 2px solid var(--cinza-border);
+            text-align: center;
+            color: #999;
+            font-size: 0.85rem;
+        }
+
+        footer .divider {
+            margin: 1rem 0;
+            letter-spacing: 2px;
+        }
+
+        /* ========== RESPONSIVO ========== */
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .header-section {
+                padding: 2rem 1.5rem;
+            }
+
+            .header-section h1 {
+                font-size: 1.6rem;
+            }
+
+            .section-header h2 {
+                font-size: 1.4rem;
+            }
+
+            .header-stats {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
+
+            table {
+                font-size: 0.85rem;
+            }
+
+            th, td {
+                padding: 0.75rem 0.5rem;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .causes-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .timeline-item {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .timeline-year {
+                position: relative;
+                padding-left: 2rem;
+            }
+
+            .timeline-year::before {
+                left: 0;
+            }
+
+            .timeline-content {
+                border-left: none;
+                border-top: 2px solid var(--rosa);
+                padding-left: 0;
+                padding-top: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <!-- ========== HEADER ========== -->
+        <section>
+            <div class="header-section">
+                <div class="subtitle">CENTRO DE IDOSOS SAGRADA FAMÍLIA</div>
+                <h1>Análise Epidemiológica de Mortalidade</h1>
+                <div class="period">Período: Março de 2020 a Janeiro de 2026</div>
+                
+                <div class="header-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">69</div>
+                        <div class="stat-label">Óbitos Registrados</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">81,7</div>
+                        <div class="stat-label">Idade Média (anos)</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">58%</div>
+                        <div class="stat-label">Predominância Masculina</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">46,4%</div>
+                        <div class="stat-label">Sepse/Choque Séptico</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== PANORAMA GERAL ========== -->
+        <section>
+            <div class="section-header">
+                <h2>Panorama Geral da Mortalidade</h2>
+                <div class="accent-bar"></div>
+            </div>
+            
+            <p style="margin-bottom: 2rem; font-size: 1rem; line-height: 1.8; color: #555;">
+                No período de aproximadamente 6 anos, foram registrados <strong>69 óbitos</strong> no Centro de Idosos Sagrada Família. 
+                A análise contempla a distribuição temporal, caracterização demográfica (sexo e faixa etária) e principais causas de morte. 
+                Os dados evidenciam padrões epidemiológicos consistentes com o esperado em Instituições de Longa Permanência para Idosos (ILPI) no Brasil.
+            </p>
+
+            <div class="cards-grid">
+                <div class="card">
+                    <div class="card-title">Média Etária</div>
+                    <div class="card-value">81,7 anos</div>
+                    <div class="card-desc">Com mediana de 82 anos. Variação de 62 a 101 anos.</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Sexo Masculino</div>
+                    <div class="card-value">40 óbitos</div>
+                    <div class="card-desc">58% do total. Razão masculino/feminino: 1,38.</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Sexo Feminino</div>
+                    <div class="card-value">29 óbitos</div>
+                    <div class="card-desc">42% do total. Distribuição equilibrada em 2020.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== DISTRIBUIÇÃO TEMPORAL ========== -->
+        <section>
+            <div class="section-header">
+                <h2>Distribuição Temporal dos Óbitos</h2>
+                <div class="accent-bar"></div>
+            </div>
+
+            <h3 style="color: var(--roxo); margin-bottom: 1.5rem; font-size: 1.1rem;">Por Ano</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Ano</th>
+                            <th class="numeric">Nº de Óbitos</th>
+                            <th class="numeric">Frequência Relativa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2020</td>
+                            <td class="numeric">19</td>
+                            <td class="numeric percentage">27,5%</td>
+                        </tr>
+                        <tr>
+                            <td>2021</td>
+                            <td class="numeric">4</td>
+                            <td class="numeric percentage">5,8%</td>
+                        </tr>
+                        <tr>
+                            <td>2022</td>
+                            <td class="numeric">13</td>
+                            <td class="numeric percentage">18,8%</td>
+                        </tr>
+                        <tr>
+                            <td>2023</td>
+                            <td class="numeric">9</td>
+                            <td class="numeric percentage">13,0%</td>
+                        </tr>
+                        <tr>
+                            <td>2024</td>
+                            <td class="numeric">11</td>
+                            <td class="numeric percentage">15,9%</td>
+                        </tr>
+                        <tr>
+                            <td>2025</td>
+                            <td class="numeric">11</td>
+                            <td class="numeric percentage">15,9%</td>
+                        </tr>
+                        <tr>
+                            <td>2026*</td>
+                            <td class="numeric">2</td>
+                            <td class="numeric percentage">2,9%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p style="font-size: 0.85rem; color: #999; margin-top: 1rem;">*Dados parciais até janeiro/2026.</p>
+
+            <h3 style="color: var(--roxo); margin-bottom: 1.5rem; margin-top: 2.5rem; font-size: 1.1rem;">Por Trimestre</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Trimestre</th>
+                            <th class="numeric">Nº de Óbitos</th>
+                            <th class="numeric">Frequência Relativa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1º Trimestre (Jan-Mar)</td>
+                            <td class="numeric">15</td>
+                            <td class="numeric percentage">21,7%</td>
+                        </tr>
+                        <tr>
+                            <td>2º Trimestre (Abr-Jun)</td>
+                            <td class="numeric">8</td>
+                            <td class="numeric percentage">11,6%</td>
+                        </tr>
+                        <tr>
+                            <td>3º Trimestre (Jul-Set)</td>
+                            <td class="numeric">27</td>
+                            <td class="numeric percentage">39,1%</td>
+                        </tr>
+                        <tr>
+                            <td>4º Trimestre (Out-Dez)</td>
+                            <td class="numeric">19</td>
+                            <td class="numeric percentage">27,5%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="highlight-box" style="margin-top: 2rem;">
+                <h3>Sazonalidade Observada</h3>
+                <p>O terceiro trimestre (julho a setembro) apresenta concentração máxima de 39,1% dos óbitos, coincidindo com o período de inverno/outono no hemisfério sul e maior incidência de infecções respiratórias. Essa informação é essencial para planejamento de ações preventivas sazonais.</p>
+            </div>
+        </section>
+
+        <!-- ========== DISTRIBUIÇÃO POR SEXO ========== -->
+        <section>
+            <div class="section-header">
+                <h2>Distribuição por Sexo</h2>
+                <div class="accent-bar"></div>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Ano</th>
+                            <th colspan="2">Masculino</th>
+                            <th colspan="2">Feminino</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2020</td>
+                            <td class="numeric">9</td>
+                            <td class="numeric percentage">47,4%</td>
+                            <td class="numeric">10</td>
+                            <td class="numeric percentage">52,6%</td>
+                            <td class="numeric">19</td>
+                        </tr>
+                        <tr>
+                            <td>2021</td>
+                            <td class="numeric">3</td>
+                            <td class="numeric percentage">75,0%</td>
+                            <td class="numeric">1</td>
+                            <td class="numeric percentage">25,0%</td>
+                            <td class="numeric">4</td>
+                        </tr>
+                        <tr>
+                            <td>2022</td>
+                            <td class="numeric">10</td>
+                            <td class="numeric percentage">76,9%</td>
+                            <td class="numeric">3</td>
+                            <td class="numeric percentage">23,1%</td>
+                            <td class="numeric">13</td>
+                        </tr>
+                        <tr>
+                            <td>2023</td>
+                            <td class="numeric">5</td>
+                            <td class="numeric percentage">55,6%</td>
+                            <td class="numeric">4</td>
+                            <td class="numeric percentage">44,4%</td>
+                            <td class="numeric">9</td>
+                        </tr>
+                        <tr>
+                            <td>2024</td>
+                            <td class="numeric">7</td>
+                            <td class="numeric percentage">63,6%</td>
+                            <td class="numeric">4</td>
+                            <td class="numeric percentage">36,4%</td>
+                            <td class="numeric">11</td>
+                        </tr>
+                        <tr>
+                            <td>2025</td>
+                            <td class="numeric">6</td>
+                            <td class="numeric percentage">54,5%</td>
+                            <td class="numeric">5</td>
+                            <td class="numeric percentage">45,5%</td>
+                            <td class="numeric">11</td>
+                        </tr>
+                        <tr>
+                            <td>2026*</td>
+                            <td class="numeric">0</td>
+                            <td class="numeric percentage">0,0%</td>
+                            <td class="numeric">2</td>
+                            <td class="numeric percentage">100,0%</td>
+                            <td class="numeric">2</td>
+                        </tr>
+                        <tr style="background: rgba(217,74,158,0.1); font-weight: 700;">
+                            <td>Total</td>
+                            <td class="numeric">40</td>
+                            <td class="numeric percentage">58,0%</td>
+                            <td class="numeric">29</td>
+                            <td class="numeric percentage">42,0%</td>
+                            <td class="numeric">69</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="highlight-box" style="margin-top: 2rem;">
+                <h3>Análise da Predominância Masculina</h3>
+                <p>A maior mortalidade masculina (58%) contrasta com a longevidade feminina observada na população geral. Este padrão pode estar associado a fatores como maior prevalência de tabagismo, DPOC, neoplasias e menor adesão a cuidados preventivos de saúde ao longo da vida. O ano de 2022 apresentou a maior disparidade, com 76,9% de óbitos masculinos.</p>
+            </div>
+        </section>
+
+        <!-- ========== DISTRIBUIÇÃO POR FAIXA ETÁRIA ========== -->
+        <section>
+            <div class="section-header">
+                <h2>Distribuição por Faixa Etária</h2>
+                <div class="accent-bar"></div>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Faixa Etária</th>
+                            <th colspan="2">Masculino</th>
+                            <th colspan="2">Feminino</th>
+                            <th colspan="2">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>60-69 anos</td>
+                            <td class="numeric">5</td>
+                            <td class="numeric percentage">7,2%</td>
+                            <td class="numeric">2</td>
+                            <td class="numeric percentage">2,9%</td>
+                            <td class="numeric">7</td>
+                            <td class="numeric percentage">10,1%</td>
+                        </tr>
+                        <tr>
+                            <td>70-79 anos</td>
+                            <td class="numeric">11</td>
+                            <td class="numeric percentage">15,9%</td>
+                            <td class="numeric">8</td>
+                            <td class="numeric percentage">11,6%</td>
+                            <td class="numeric">19</td>
+                            <td class="numeric percentage">27,5%</td>
+                        </tr>
+                        <tr>
+                            <td>80-89 anos</td>
+                            <td class="numeric">17</td>
+                            <td class="numeric percentage">24,6%</td>
+                            <td class="numeric">13</td>
+                            <td class="numeric percentage">18,8%</td>
+                            <td class="numeric">30</td>
+                            <td class="numeric percentage">43,5%</td>
+                        </tr>
+                        <tr>
+                            <td>90-99 anos</td>
+                            <td class="numeric">6</td>
+                            <td class="numeric percentage">8,7%</td>
+                            <td class="numeric">5</td>
+                            <td class="numeric percentage">7,2%</td>
+                            <td class="numeric">11</td>
+                            <td class="numeric percentage">15,9%</td>
+                        </tr>
+                        <tr>
+                            <td>100+ anos</td>
+                            <td class="numeric">1</td>
+                            <td class="numeric percentage">1,4%</td>
+                            <td class="numeric">1</td>
+                            <td class="numeric percentage">1,4%</td>
+                            <td class="numeric">2</td>
+                            <td class="numeric percentage">2,9%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3 style="color: var(--roxo); margin-bottom: 1.5rem; margin-top: 2rem; font-size: 1.1rem;">Visualização Proporcional</h3>
+
+            <div style="background: var(--branco); padding: 2rem; border-radius: 8px; box-shadow: var(--shadow-soft);">
+                <div class="age-group">
+                    <div class="age-label">60-69 anos</div>
+                    <div class="age-bar-container">
+                        <div class="age-bar" style="width: 10.1%;">10,1%</div>
+                    </div>
+                </div>
+
+                <div class="age-group">
+                    <div class="age-label">70-79 anos</div>
+                    <div class="age-bar-container">
+                        <div class="age-bar" style="width: 27.5%;">27,5%</div>
+                    </div>
+                </div>
+
+                <div class="age-group">
+                    <div class="age-label">80-89 anos</div>
+                    <div class="age-bar-container">
+                        <div class="age-bar" style="width: 43.5%;">43,5%</div>
+                    </div>
+                </div>
+
+                <div class="age-group">
+                    <div class="age-label">90-99 anos</div>
+                    <div class="age-bar-container">
+                        <div class="age-bar" style="width: 15.9%;">15,9%</div>
+                    </div>
+                </div>
+
+                <div class="age-group">
+                    <div class="age-label">100+ anos</div>
+                    <div class="age-bar-container">
+                        <div class="age-bar" style="width: 2.9%;">2,9%</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="highlight-box" style="margin-top: 2rem;">
+                <h3>Concentração na Faixa de 80-89 Anos</h3>
+                <p>A faixa etária de 80-89 anos concentra 43,5% de todos os óbitos (30 casos), seguida pela faixa de 70-79 anos com 27,5% (19 casos). Juntas, essas duas faixas representam 71% da mortalidade total, evidenciando a vulnerabilidade extrema dessa população caracterizada por múltiplas comorbidades e fragilidade.</p>
+            </div>
+        </section>
+
+        <!-- ========== PRINCIPAIS CAUSAS ========== -->
+        <section>
+            <div class="section-header">
+                <h2>Principais Causas de Óbito</h2>
+                <div class="accent-bar"></div>
+            </div>
+
+            <p style="margin-bottom: 2rem; color: #555;">
+                <strong>Nota Importante:</strong> Cada registro de óbito pode conter múltiplas causas associadas, sendo comum a coexistência de patologias infecciosas, doenças crônicas e síndromes geriátricas.
+            </p>
+
+            <h3 style="color: var(--roxo); margin-bottom: 1.5rem; font-size: 1.1rem;">Causas Diretas de Morte</h3>
+            <div class="causes-grid">
+                <div class="cause-item">
+                    <div class="cause-name">Sepse / Choque Séptico</div>
+                    <div class="cause-freq">46,4%</div>
+                    <div class="cause-count">32 menções</div>
+                </div>
+
+                <div class="cause-item">
+                    <div class="cause-name">Pneumonia</div>
+                    <div class="cause-freq">40,6%</div>
+                    <div class="cause-count">28 menções</div>
+                </div>
+
+                <div class="cause-item">
+                    <div class="cause-name">Insuficiência Respiratória</div>
+                    <div class="cause-freq">30,4%</div>
+                    <div class="cause-count">21 menções</div>
+                </div>
+
+                <div class="cause-item">
+                    <div class="cause-name">Insuficiência Cardíaca / IAM</div>
+                    <div class="cause-freq">17,4%</div>
+                    <div class="cause-count">12 menções</div>
+                </div>
+
+                <div class="cause-item">
+                    <div class="cause-name">COVID-19</div>
+                    <div class="cause-freq">14,5%</div>
+                    <div class="cause-count">10 menções</div>
+                </div>
+
+                <div class="cause-item">
+                    <div class="cause-name">Neoplasias</div>
+                    <div class="cause-freq">14,5%</div>
+                    <div class="cause-count">10 menções</div>
+                </div>
+
+                <div class="cause-item">
+                    <div class="cause-name">Falência Múltipla de Órgãos</div>
+                    <div class="cause-freq">10,1%</div>
+                    <div class="cause-count">7 menções</div>
+                </div>
+
+                <div class="cause-item">
+                    <div class="cause-name">Desnutrição / Caquexia</div>
+                    <div class="cause-freq">10,1%</div>
+                    <div class="cause-count">7 menções</div>
+                </div>
+
+                <div class="cause-item">
+                    <div class="cause-name">AVC</div>
+                    <div class="cause-freq">8,7%</div>
+                    <div class="cause-count">6 menções</div>
+                </div>
+
+                <div class="cause-item">
+                    <div class="cause-name">Síndrome de Imobilidade</div>
+                    <div class="cause-freq">5,8%</div>
+                    <div class="cause-count">4 menções</div>
+                </div>
+            </div>
+
+            <h3 style="color: var(--roxo); margin-bottom: 1.5rem; margin-top: 3rem; font-size: 1.1rem;">Comorbidades Crônicas Associadas</h3>
+            <div class="causes-grid">
+                <div class="cause-item">
+                    <div class="cause-name">Hipertensão Arterial Sistêmica</div>
+                    <div class="cause-freq">26,1%</div>
+                    <div class="cause-count">18 menções</div>
+                </div>
+
+                <div class="cause-item">
+                    <div class="cause-name">Demência / Alzheimer</div>
+                    <div class="cause-freq">24,6%</div>
+                    <div class="cause-count">17 menções</div>
+                </div>
+
+                <div class="cause-item">
+                    <div class="cause-name">Doença Renal Crônica</div>
+                    <div class="cause-freq">15,9%</div>
+                    <div class="cause-count">11 menções</div>
+                </div>
+
+                <div class="cause-item">
+                    <div class="cause-name">DPOC / Enfisema</div>
+                    <div class="cause-freq">13,0%</div>
+                    <div class="cause-count">9 menções</div>
+                </div>
+
+                <div class="cause-item">
+                    <div class="cause-name">Diabetes Mellitus</div>
+                    <div class="cause-freq">10,1%</div>
+                    <div class="cause-count">7 menções</div>
+                </div>
+            </div>
+
+            <div class="highlight-box" style="margin-top: 2rem;">
+                <h3>Padrão Infeccioso Predominante</h3>
+                <p>As causas infecciosas (sepse, pneumonia e insuficiência respiratória) representam conjuntamente 117,4% das menções (múltiplas causas por óbito), evidenciando que as infecções constituem a principal via de morte na população estudada. Este padrão é consistente com a literatura sobre mortalidade em ILPI, reflexo da imunossupressão associada ao envelhecimento e exposição a infecções nosocomiais.</p>
+            </div>
+        </section>
+
+        <!-- ========== IMPACTO COVID-19 ========== -->
+        <section>
+            <div class="section-header">
+                <h2>Impacto da Pandemia COVID-19</h2>
+                <div class="accent-bar"></div>
+            </div>
+
+            <div class="cards-grid">
+                <div class="card">
+                    <div class="card-title">Óbitos com COVID-19</div>
+                    <div class="card-value">10</div>
+                    <div class="card-desc">14,5% do total de 69 óbitos. Todos em 2020.</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Concentração em 2020</div>
+                    <div class="card-value">52,6%</div>
+                    <div class="card-desc">Dos 19 óbitos em 2020, 10 envolveram COVID-19.</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Pico Máximo</div>
+                    <div class="card-value">Julho 2020</div>
+                    <div class="card-desc">6 dos 10 casos ocorreram neste mês (1ª onda).</div>
+                </div>
+            </div>
+
+            <div class="highlight-box" style="margin-top: 2rem;">
+                <h3>Ausência de COVID-19 Pós-2020</h3>
+                <p>Não foram registrados óbitos relacionados à COVID-19 nos anos 2021-2026, o que pode estar associado ao avanço da vacinação na população e à adoção robusta de medidas de controle de infecção na instituição. Este achado sugere eficácia das estratégias implementadas.</p>
+            </div>
+        </section>
+
+        <!-- ========== TIMELINE EVOLUÇÃO ========== -->
+        <section>
+            <div class="section-header">
+                <h2>Evolução Temporal e Tendências</h2>
+                <div class="accent-bar"></div>
+            </div>
+
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-year">2020</div>
+                    <div class="timeline-content">
+                        <div class="timeline-stat">19 óbitos | Idade média: 80,8 anos</div>
+                        <div class="timeline-desc">Ano com maior número absoluto de óbitos, impactado pela pandemia de COVID-19. Concentração de 52,6% dos casos relativos à pandemia ocorreu em julho. Este ano marca o início da série temporal.</div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">2021</div>
+                    <div class="timeline-content">
+                        <div class="timeline-stat">4 óbitos | Idade média: 83,5 anos</div>
+                        <div class="timeline-desc">Redução acentuada (redução de 78,9% em relação a 2020). Nenhum óbito relacionado a COVID-19. Período de consolidação de vacinação institucional.</div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">2022</div>
+                    <div class="timeline-content">
+                        <div class="timeline-stat">13 óbitos | Idade média: 80,2 anos</div>
+                        <div class="timeline-desc">Aumento moderado em relação a 2021 (225% de incremento). Maior disparidade por sexo: 76,9% masculino e 23,1% feminino. Sem relação com COVID-19.</div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">2023</div>
+                    <div class="timeline-content">
+                        <div class="timeline-stat">9 óbitos | Idade média: 79,3 anos</div>
+                        <div class="timeline-desc">Estabilização em nível intermediário. Menor idade média ao óbito no período (79,3 anos). Retorno à distribuição mais equilibrada entre os sexos (55,6% M / 44,4% F).</div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">2024</div>
+                    <div class="timeline-content">
+                        <div class="timeline-stat">11 óbitos | Idade média: 83,3 anos</div>
+                        <div class="timeline-desc">Valores estáveis comparáveis a 2023-2025. Maior idade média observada entre os anos de tendência normal (sem impacto pandêmico). Distribuição: 63,6% M / 36,4% F.</div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">2025</div>
+                    <div class="timeline-content">
+                        <div class="timeline-stat">11 óbitos | Idade média: 82,9 anos</div>
+                        <div class="timeline-desc">Continuidade de estabilização observada desde 2023. Mantém padrão demográfico similar a 2024. Encerramento de um ciclo de 6 anos com tendência pós-pandêmica consolidada.</div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">2026*</div>
+                    <div class="timeline-content">
+                        <div class="timeline-stat">2 óbitos | Idade média: 92,5 anos</div>
+                        <div class="timeline-desc">Dados parciais até janeiro/2026. Todos em sexo feminino. Pequena amostra impede conclusões. Indica possível continuidade de estabilização observada em 2024-2025.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== RECOMENDAÇÕES ========== -->
+        <section>
+            <div class="section-header">
+                <h2>Recomendações Baseadas em Evidências</h2>
+                <div class="accent-bar"></div>
+            </div>
+
+            <div class="recommendations">
+                <div class="recommendation-item">
+                    <div class="rec-number">1</div>
+                    <div class="rec-content">
+                        <h4>Fortalecimento de Protocolos de Prevenção Respiratória</h4>
+                        <p>Implementar vacinação atualizada contra influenza, COVID-19 e pneumococo antes do 3º trimestre (julho-setembro). Reforçar higiene, ventilação e uso de EPIs durante meses de frio. Implementar triagem rigorosa de visitantes com sintomas respiratórios.</p>
+                    </div>
+                </div>
+
+                <div class="recommendation-item">
+                    <div class="rec-number">2</div>
+                    <div class="rec-content">
+                        <h4>Vigilância Sentinela contra Sepse</h4>
+                        <p>Treinar equipe para reconhecimento precoce de sinais de infecção sistêmica (confusão mental aguda, recusa alimentar, letargia). Estabelecer protocolo de investigação rápida de possíveis focos primários. Padronizar e otimizar antibioticoterapia empírica e direcionada ao primeiro sinal de infecção.</p>
+                    </div>
+                </div>
+
+                <div class="recommendation-item">
+                    <div class="rec-number">3</div>
+                    <div class="rec-content">
+                        <h4>Monitoramento Nutricional Contínuo</h4>
+                        <p>Implementar avaliação nutricional contínua com ênfase especial em residentes com demência/Alzheimer (24,6% das mortes). Focar em prevenção de broncoaspiração e reversão de desnutrição/caquexia. Implementar fisioterapia motora e mudança rigorosa de decúbito.</p>
+                    </div>
+                </div>
+
+                <div class="recommendation-item">
+                    <div class="rec-number">4</div>
+                    <div class="rec-content">
+                        <h4>Programa Integrado de Cuidados Paliativos</h4>
+                        <p>Desenvolver programa de cuidados paliativos considerando o perfil de idosos com múltiplas comorbidades e elevada fragilidade. Honrar diretivas antecipadas com conforto máximo ao final da vida. Integração entre clínica, enfermagem e equipe multidisciplinar.</p>
+                    </div>
+                </div>
+
+                <div class="recommendation-item">
+                    <div class="rec-number">5</div>
+                    <div class="rec-content">
+                        <h4>Padronização de Codificação de Causas</h4>
+                        <p>Implementar codificação padronizada conforme Classificação Internacional de Doenças (CID-10). Extrair informações de Declaração de Óbito (DO) quando possível, em complemento aos registros institucionais. Melhorar qualidade dos registros para comparabilidade de dados prospectivos.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== METODOLOGIA ========== -->
+        <section>
+            <div class="section-header">
+                <h2>Metodologia</h2>
+                <div class="accent-bar"></div>
+            </div>
+
+            <div class="methodology">
+                <h4>Tipo de Estudo</h4>
+                <p style="margin-bottom: 1.5rem;">Estudo epidemiológico descritivo, retrospectivo, de série temporal, baseado em dados secundários da Planilha de Controle de Óbitos do Centro de Idosos Sagrada Família.</p>
+
+                <h4>Período Analisado</h4>
+                <p style="margin-bottom: 1.5rem;">Março de 2020 a janeiro de 2026 (aproximadamente 6 anos).</p>
+
+                <h4>Critérios de Inclusão</h4>
+                <ul>
+                    <li>Todos os óbitos registrados na planilha institucional entre março de 2020 e janeiro de 2026</li>
+                    <li>Total de 69 registros de óbitos</li>
+                </ul>
+
+                <h4>Variáveis Analisadas</h4>
+                <ul>
+                    <li>Data do óbito</li>
+                    <li>Sexo (masculino/feminino)</li>
+                    <li>Data de nascimento e idade ao óbito</li>
+                    <li>Causa do óbito (conforme registro institucional)</li>
+                    <li>Análise realizada por agrupamento de palavras-chave</li>
+                </ul>
+
+                <h4>Análise Estatística</h4>
+                <ul>
+                    <li>Estatísticas descritivas: frequências absolutas e relativas</li>
+                    <li>Medidas de tendência central: média e mediana de idade</li>
+                    <li>Medidas de dispersão: desvio padrão</li>
+                    <li>Representação em tabelas e visualizações gráficas</li>
+                </ul>
+
+                <h4>Limitações do Estudo</h4>
+                <ul>
+                    <li>Registros de causas de óbito extraídos de planilha institucional e não de Declaração de Óbito (DO)</li>
+                    <li>Ausência de codificação CID-10 padronizada</li>
+                    <li>Amostra limitada (n=69)</li>
+                    <li>Dados de 2026 parciais (apenas janeiro)</li>
+                    <li>Não foram analisadas variáveis complementares como tempo de institucionalização, comorbidades preexistentes e estado funcional prévio</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ========== CONCLUSÃO ========== -->
+        <section>
+            <div class="highlight-box" style="background: linear-gradient(135deg, rgba(107,76,154,0.15), rgba(217,74,158,0.15)); border-color: rgba(107,76,154,0.5);">
+                <h3 style="color: var(--roxo); margin-bottom: 1.5rem; font-size: 1.3rem;">Conclusões</h3>
+                <p style="margin-bottom: 1.5rem; line-height: 1.8;">
+                    O presente relatório epidemiológico permite traçar o perfil de mortalidade do Centro de Idosos Sagrada Família no período de 2020 a 2026 e evidencia que os padrões observados são consistentes com o esperado em Instituições de Longa Permanência para Idosos no Brasil.
+                </p>
+
+                <p style="margin-bottom: 1rem; line-height: 1.8;">
+                    <strong>Principais Achados:</strong>
+                </p>
+
+                <ul style="margin-left: 1.5rem; margin-bottom: 1.5rem;">
+                    <li style="margin-bottom: 0.75rem;">69 óbitos registrados com média de 11,5 óbitos/ano (excluindo 2026), sendo 2020 o ano com maior impacto pela pandemia de COVID-19</li>
+                    <li style="margin-bottom: 0.75rem;">Perfil predominantemente masculino (58%), com idade média de 81,7 anos e concentração máxima na faixa de 80-89 anos (43,5%)</li>
+                    <li style="margin-bottom: 0.75rem;">Causas infecciosas (sepse, pneumonia, insuficiência respiratória) como principal via de morte, frequentemente associadas a comorbidades crônicas</li>
+                    <li style="margin-bottom: 0.75rem;">Impacto significativo e limitado da COVID-19 em 2020, sem casos nos anos subsequentes</li>
+                    <li>Sazonalidade clara com pico máximo no 3º trimestre (39,1%), período de inverno/outono</li>
+                </ul>
+
+                <p style="line-height: 1.8;">
+                    A vigilância epidemiológica contínua, associada à implementação rigorosa dos protocolos recomendados, constitui ferramenta essencial para reduzir morbimortalidade nessa população vulnerável e dignificar o cuidado prestado pelo Centro de Idosos Sagrada Família.
+                </p>
+            </div>
+        </section>
+
+        <!-- ========== FOOTER ========== -->
+        <footer>
+            <div class="divider">∼ ∼ ∼</div>
+            <p><strong>Centro de Idosos Sagrada Família</strong></p>
+            <p>Relatório Epidemiológico de Mortalidade Institucional</p>
+            <p>Período: Março de 2020 a Janeiro de 2026</p>
+            <p style="margin-top: 1.5rem; font-size: 0.8rem;">Dados que protegem • Vigilância que dignifica • Cuidado que transforma</p>
+        </footer>
+
+    </div>
+</body>
+</html>

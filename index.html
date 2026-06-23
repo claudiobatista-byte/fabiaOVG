@@ -145,6 +145,116 @@
             border-bottom-color: var(--amarelo);
         }
 
+        /* ========== RESPONSIVO ========== */
+        @media (max-width: 1024px) {
+            header {
+                padding: 0.8rem 1.5rem;
+                gap: 2rem;
+            }
+
+            .logo-text h1 {
+                font-size: 1rem;
+            }
+
+            .logo-text p {
+                font-size: 0.7rem;
+            }
+
+            .tabs-container {
+                gap: 1rem;
+            }
+
+            .tab-btn {
+                font-size: 0.8rem;
+                padding: 6px 1px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-wrap: wrap;
+                padding: 0.75rem 1rem;
+                gap: 0.5rem 1rem;
+                align-content: flex-start;
+            }
+
+            .header-top {
+                width: 100%;
+            }
+
+            .logo-image {
+                height: 38px;
+                width: 38px;
+            }
+
+            .logo-section {
+                gap: 0.6rem;
+            }
+
+            .logo-text h1 {
+                font-size: 0.95rem;
+            }
+
+            .logo-text p {
+                font-size: 0.65rem;
+            }
+
+            .tabs-container {
+                width: 100%;
+                gap: 0.8rem;
+                justify-content: flex-start;
+                overflow-x: auto;
+                padding-bottom: 0.5rem;
+            }
+
+            .tab-btn {
+                font-size: 0.75rem;
+                padding: 5px 0;
+                gap: 4px;
+            }
+
+            .tab-btn i {
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header {
+                padding: 0.6rem 0.75rem;
+            }
+
+            .logo-image {
+                height: 32px;
+                width: 32px;
+            }
+
+            .logo-section {
+                gap: 0.4rem;
+            }
+
+            .logo-text h1 {
+                font-size: 0.85rem;
+            }
+
+            .logo-text p {
+                font-size: 0.6rem;
+                letter-spacing: 0;
+            }
+
+            .tabs-container {
+                gap: 0.5rem;
+            }
+
+            .tab-btn {
+                font-size: 0.7rem;
+                padding: 4px 0;
+            }
+
+            .tab-btn i {
+                display: none;
+            }
+        }
+
         /* ========== CONTENT ========== */
         .content-wrapper {
             max-width: 100%;
@@ -207,19 +317,30 @@
 
         .hero-meta {
             display: flex;
-            gap: 2rem;
+            gap: 1.5rem;
             justify-content: center;
             flex-wrap: wrap;
             font-size: 0.95rem;
+            margin-top: 2rem;
         }
 
         .meta-item {
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            background: rgba(255,255,255,0.15);
-            padding: 0.75rem 1.25rem;
-            border-radius: 20px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            color: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            transition: var(--transition);
+        }
+
+        .meta-item:hover {
+            background: rgba(255,255,255,0.12);
+            border-color: rgba(255,255,255,0.25);
         }
 
         section {
@@ -383,51 +504,73 @@
 
         .gender-card {
             background: var(--branco);
-            padding: 2.5rem;
+            padding: 2rem 2.5rem;
             text-align: center;
             border-radius: 12px;
             box-shadow: var(--shadow-soft);
-            border-top: 4px solid var(--amarelo);
+            border: 1px solid var(--cinza-border);
+            border-top: 3px solid var(--rosa);
             transition: var(--transition);
         }
 
         .gender-card:hover {
             box-shadow: var(--shadow-medium);
             transform: translateY(-4px);
+            border-top-color: var(--amarelo);
         }
 
         .gender-icon {
-            font-size: 3.5rem;
-            margin-bottom: 1rem;
+            display: none;
         }
 
         .gender-percentage {
-            font-size: 2.5rem;
+            font-size: 3rem;
             font-weight: 700;
             color: var(--rosa);
+            margin-bottom: 0.8rem;
+            letter-spacing: -1px;
+        }
+
+        .gender-label {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--roxo);
             margin-bottom: 0.5rem;
         }
 
         .gender-count {
-            color: #666;
-            font-size: 0.95rem;
+            color: #999;
+            font-size: 0.9rem;
         }
 
         .ratio-badge {
-            background: linear-gradient(135deg, var(--rosa), var(--roxo));
+            background: linear-gradient(135deg, var(--roxo) 0%, var(--rosa) 100%);
             color: white;
-            padding: 1.5rem;
-            border-radius: 50%;
-            width: 120px;
-            height: 120px;
+            padding: 2rem;
+            border-radius: 8px;
+            width: auto;
+            max-width: 400px;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-weight: 700;
+            font-weight: 600;
             margin: 2rem auto;
-            font-size: 0.95rem;
+            font-size: 1rem;
             text-align: center;
             box-shadow: var(--shadow-medium);
+        }
+
+        .ratio-badge > div {
+            margin: 0.5rem 0;
+        }
+
+        .ratio-badge small {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 400;
+            opacity: 0.9;
+            margin-top: 0.5rem;
         }
 
         .factor-tag {
@@ -658,6 +801,7 @@
             border-radius: 12px;
             box-shadow: var(--shadow-medium);
             transition: var(--transition);
+            border-left: 4px solid var(--amarelo);
         }
 
         .syndrome-box:hover {
@@ -666,15 +810,16 @@
         }
 
         .syndrome-icon {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
+            display: none;
         }
 
         .syndrome-title {
-            font-size: 1.2rem;
+            font-size: 1.25rem;
             font-weight: 700;
             margin-bottom: 1rem;
             color: var(--amarelo);
+            letter-spacing: -0.5px;
+        }
         }
 
         .syndrome-desc {
@@ -738,23 +883,29 @@
         }
 
         .tactic-item {
-            background: linear-gradient(135deg, rgba(217,74,158,0.08) 0%, rgba(240,201,68,0.05) 100%);
-            padding: 1.25rem;
-            margin-bottom: 1rem;
-            border-left: 4px solid var(--rosa);
-            border-radius: 4px;
+            background: linear-gradient(135deg, rgba(217,74,158,0.05) 0%, rgba(240,201,68,0.03) 100%);
+            padding: 1.5rem;
+            margin-bottom: 1.25rem;
+            border-left: 3px solid var(--rosa);
+            border-radius: 6px;
             transition: var(--transition);
+            border: 1px solid rgba(217,74,158,0.1);
+            border-left: 3px solid var(--rosa);
         }
 
         .tactic-item:hover {
             border-left-color: var(--amarelo);
+            background: linear-gradient(135deg, rgba(217,74,158,0.08) 0%, rgba(240,201,68,0.05) 100%);
+            box-shadow: var(--shadow-soft);
             transform: translateX(4px);
         }
 
         .tactic-title {
             font-weight: 700;
             color: var(--roxo);
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
+            font-size: 1.05rem;
+            letter-spacing: -0.3px;
         }
 
         .conclusion {
@@ -850,17 +1001,54 @@
             }
 
             .hero-meta {
-                flex-direction: column;
+                flex-direction: row;
                 gap: 0.75rem;
             }
 
             .meta-item {
                 flex: 1;
                 justify-content: center;
+                padding: 0.75rem 1rem;
+                font-size: 0.85rem;
             }
 
             .iframe-container {
                 height: calc(100vh - 160px);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-meta {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .meta-item {
+                width: 100%;
+                padding: 0.75rem 1rem;
+                font-size: 0.8rem;
+            }
+
+            .gender-grid {
+                gap: 1.5rem;
+            }
+
+            .gender-card {
+                padding: 1.5rem 1.25rem;
+            }
+
+            .gender-percentage {
+                font-size: 2.5rem;
+                margin-bottom: 0.6rem;
+            }
+
+            .gender-label {
+                font-size: 0.95rem;
+                margin-bottom: 0.4rem;
+            }
+
+            .gender-count {
+                font-size: 0.85rem;
             }
         }
     </style>
@@ -904,9 +1092,9 @@
                 <h2>Análise Epidemiológica 2020–2026</h2>
                 <p>Transformando dados em proteção — vigilância epidemiológica como ferramenta de gestão do cuidado</p>
                 <div class="hero-meta">
-                    <div class="meta-item">📊 69 Registros Analisados</div>
-                    <div class="meta-item">📅 Março 2020 – Janeiro 2026</div>
-                    <div class="meta-item">🏥 Centro de Idosos Sagrada Família</div>
+                    <div class="meta-item">69 Registros Analisados</div>
+                    <div class="meta-item">Março 2020 – Janeiro 2026</div>
+                    <div class="meta-item">Centro de Idosos Sagrada Família</div>
                 </div>
             </div>
 
@@ -993,13 +1181,13 @@
 
                         <div class="gender-grid">
                             <div class="gender-card">
-                                <div class="gender-icon">♂️</div>
                                 <div class="gender-percentage">58,0%</div>
+                                <div class="gender-label">Masculino</div>
                                 <div class="gender-count">(40 óbitos)</div>
                             </div>
                             <div class="gender-card">
-                                <div class="gender-icon">♀️</div>
                                 <div class="gender-percentage">42,0%</div>
+                                <div class="gender-label">Feminino</div>
                                 <div class="gender-count">(29 óbitos)</div>
                             </div>
                         </div>
@@ -1183,7 +1371,6 @@
 
                         <div class="syndromes-grid">
                             <div class="syndrome-box">
-                                <div class="syndrome-icon">🔍</div>
                                 <div class="syndrome-title">Desnutrição & Caquexia (10,1%)</div>
                                 <div class="syndrome-desc">
                                     A perda de massa magra não é apenas estética; é a perda do "motor" imunológico. Essencial em pacientes com demência que perdem capacidade de se alimentar.
@@ -1191,7 +1378,6 @@
                             </div>
 
                             <div class="syndrome-box">
-                                <div class="syndrome-icon">🏥</div>
                                 <div class="syndrome-title">Síndrome de Imobilidade (5,8%)</div>
                                 <div class="syndrome-desc">
                                     O confinamento ao leito gera declínio pulmonar, lesões por pressão e perda de autonomia — efeito dominó mortal.
@@ -1232,52 +1418,52 @@
                         </div>
 
                         <div class="protocol-detail">
-                            <h3>🛡️ Protocolo 1: A Blindagem Sazonal e Respiratória</h3>
+                            <h3>Protocolo 1: A Blindagem Sazonal e Respiratória</h3>
                             <p style="margin-bottom: 1rem; color: #666;"><em>Preparação antecipada para o 3º Trimestre (Julho a Setembro)</em></p>
                             <div class="tactic-item">
-                                <div class="tactic-title">💉 Barreira Imunológica</div>
+                                <div class="tactic-title">Barreira Imunológica</div>
                                 <div style="color: #666; margin-top: 0.5rem;">Vacinação 100% atualizada antes de Junho (Influenza, COVID-19 bivalente, Pneumococo).</div>
                             </div>
                             <div class="tactic-item">
-                                <div class="tactic-title">🧼 Vigilância Ambiental</div>
+                                <div class="tactic-title">Vigilância Ambiental</div>
                                 <div style="color: #666; margin-top: 0.5rem;">Reforço extremo em higiene, ventilação e EPIs durante meses de frio com monitoramento SESMT.</div>
                             </div>
                             <div class="tactic-item">
-                                <div class="tactic-title">🚪 Triagem de Visitantes</div>
+                                <div class="tactic-title">Triagem de Visitantes</div>
                                 <div style="color: #666; margin-top: 0.5rem;">Controle rigoroso para indivíduos com sintomas respiratórios durante outono e inverno.</div>
                             </div>
                         </div>
 
                         <div class="protocol-detail">
-                            <h3>🎯 Protocolo 2: Sentinelas Contra a Sepse</h3>
+                            <h3>Protocolo 2: Sentinelas Contra a Sepse</h3>
                             <p style="margin-bottom: 1rem; color: #666;"><em>Interceptando a infecção antes do choque séptico (46,4% dos óbitos)</em></p>
                             <div class="tactic-item">
-                                <div class="tactic-title">👁️ Observação Básica</div>
+                                <div class="tactic-title">Observação Básica</div>
                                 <div style="color: #666; margin-top: 0.5rem;">Monitoramento diário de confusão mental aguda, recusa alimentar ou letargia repentina.</div>
                             </div>
                             <div class="tactic-item">
-                                <div class="tactic-title">⚡ Ação Rápida</div>
+                                <div class="tactic-title">Ação Rápida</div>
                                 <div style="color: #666; margin-top: 0.5rem;">Avaliação imediata de focos primários (trato urinário, pulmões, pele/lesões).</div>
                             </div>
                             <div class="tactic-item">
-                                <div class="tactic-title">💊 Intervenção</div>
+                                <div class="tactic-title">Intervenção</div>
                                 <div style="color: #666; margin-top: 0.5rem;">Adequação precoce e precisa de antibioticoterapia ao primeiro sinal de infecção sistêmica.</div>
                             </div>
                         </div>
 
                         <div class="protocol-detail">
-                            <h3>❤️ Protocolo 3: A Dignidade do Cuidado Integrado</h3>
+                            <h3>Protocolo 3: A Dignidade do Cuidado Integrado</h3>
                             <p style="margin-bottom: 1rem; color: #666;"><em>Suporte focado em síndromes demenciais (24,6%) e fragilidade extrema</em></p>
                             <div class="tactic-item">
-                                <div class="tactic-title">🍽️ Segurança Nutricional</div>
+                                <div class="tactic-title">Segurança Nutricional</div>
                                 <div style="color: #666; margin-top: 0.5rem;">Monitoramento contínuo com meta: Zero bronchoaspiração e reversão de caquexia.</div>
                             </div>
                             <div class="tactic-item">
-                                <div class="tactic-title">🚶 Proteção da Mobilidade</div>
+                                <div class="tactic-title">Proteção da Mobilidade</div>
                                 <div style="color: #666; margin-top: 0.5rem;">Fisioterapia motora e mudança rigorosa de decúbito para combater Síndrome de Imobilidade.</div>
                             </div>
                             <div class="tactic-item">
-                                <div class="tactic-title">🕊️ Cuidados Paliativos</div>
+                                <div class="tactic-title">Cuidados Paliativos</div>
                                 <div style="color: #666; margin-top: 0.5rem;">Programa integrado honrando diretivas antecipadas com conforto máximo ao final da vida.</div>
                             </div>
                         </div>

@@ -115,6 +115,12 @@ body{font-family:'Segoe UI', 'Roboto', sans-serif;background:#f5f7fc;color:#2c3e
 .mo-box p{color:#555;line-height:1.8;font-size:14px}
 .edit-trigger{cursor:pointer;color:#D94A9E;text-decoration:none;font-weight:500;margin-top:12px;display:inline-block}
 
+/* EDITABLE FIELDS */
+.editable-field{cursor:text;outline:none;border-bottom:2px dashed transparent;transition:all 0.15s;border-radius:3px;padding:2px 4px;margin:-2px -4px}
+.editable-field:hover{border-bottom-color:#D94A9E;background-color:rgba(217,74,158,0.08)}
+.editable-field:focus{border-bottom-color:#D94A9E;background-color:rgba(217,74,158,0.1);outline:none;box-shadow:0 0 0 2px rgba(217,74,158,0.15)}
+.editable-field::after{content:'';position:absolute}
+
 /* HISTORY - RELATÓRIO */
 .history-timeline{margin-top:24px}
 .no-history{text-align:center;padding:40px;color:#7f8c8d}
@@ -237,13 +243,11 @@ body{font-family:'Segoe UI', 'Roboto', sans-serif;background:#f5f7fc;color:#2c3e
           <div class="measures-obs">
             <div class="mo-box">
               <h2><i class="fas fa-check-circle" style="color:#27ae60"></i> Medidas Adotadas</h2>
-              <p id="measuresText"></p>
-              <span class="edit-trigger hide-on-export" onclick="openEdit('medidas','Medidas Adotadas')"><i class="fas fa-edit"></i> Editar</span>
+              <p id="measuresText" class="editable-field" contenteditable="true" data-path="medidas"></p>
             </div>
             <div class="mo-box">
               <h2><i class="fas fa-comment" style="color:#F0C944"></i> Observações</h2>
-              <p id="observationsText"></p>
-              <span class="edit-trigger hide-on-export" onclick="openEdit('obs','Observações')"><i class="fas fa-edit"></i> Editar</span>
+              <p id="observationsText" class="editable-field" contenteditable="true" data-path="obs"></p>
             </div>
           </div>
         </div>
@@ -380,18 +384,15 @@ function render(){
       <div class="inst-detail">
         <div style="margin-bottom:12px">
           <strong style="color:#27ae60;display:flex;align-items:center;gap:6px;margin-bottom:4px"><i class="fas fa-check-circle"></i> Assintomáticos:</strong>
-          <p style="color:#555;line-height:1.6;margin:0 0 6px 24px">${data[k].infoA}</p>
-          <button class="edit-btn hide-on-export" onclick="openEdit('${k}.infoA','Editar: Assintomáticos — ${label}')" style="margin-left:24px;display:inline-flex"><i class="fas fa-edit"></i> Editar</button>
+          <p class="editable-field" contenteditable="true" data-path="${k}.infoA" style="color:#555;line-height:1.6;margin:0 0 6px 24px">${data[k].infoA}</p>
         </div>
         <div style="margin-bottom:12px">
           <strong style="color:#d68910;display:flex;align-items:center;gap:6px;margin-bottom:4px"><i class="fas fa-exclamation-triangle"></i> Sintomáticos:</strong>
-          <p style="color:#555;line-height:1.6;margin:0 0 6px 24px">${data[k].infoS}</p>
-          <button class="edit-btn hide-on-export" onclick="openEdit('${k}.infoS','Editar: Sintomáticos — ${label}')" style="margin-left:24px;display:inline-flex"><i class="fas fa-edit"></i> Editar</button>
+          <p class="editable-field" contenteditable="true" data-path="${k}.infoS" style="color:#555;line-height:1.6;margin:0 0 6px 24px">${data[k].infoS}</p>
         </div>
         <div>
           <strong style="color:#d32f2f;display:flex;align-items:center;gap:6px;margin-bottom:4px"><i class="fas fa-times-circle"></i> Confirmados:</strong>
-          <p style="color:#555;line-height:1.6;margin:0 0 6px 24px">${data[k].infoC}</p>
-          <button class="edit-btn hide-on-export" onclick="openEdit('${k}.infoC','Editar: Confirmados — ${label}')" style="margin-left:24px;display:inline-flex"><i class="fas fa-edit"></i> Editar</button>
+          <p class="editable-field" contenteditable="true" data-path="${k}.infoC" style="color:#555;line-height:1.6;margin:0 0 6px 24px">${data[k].infoC}</p>
         </div>
       </div>
     </div>`;
@@ -406,33 +407,43 @@ function render(){
       
       <div class="info-section">
         <strong><i class="fas fa-check-circle" style="color:#27ae60"></i> Assintomáticos</strong>
-        <p>${data[k].infoA}</p>
-        <button class="edit-btn" onclick="openEdit('${k}.infoA','Editar: Assintomáticos — ${label}')"><i class="fas fa-edit"></i> Editar</button>
+        <p class="editable-field" contenteditable="true" data-path="${k}.infoA">${data[k].infoA}</p>
       </div>
       
       <div class="info-section">
         <strong><i class="fas fa-exclamation-triangle" style="color:#d68910"></i> Sintomáticos</strong>
-        <p>${data[k].infoS}</p>
-        <button class="edit-btn" onclick="openEdit('${k}.infoS','Editar: Sintomáticos — ${label}')"><i class="fas fa-edit"></i> Editar</button>
+        <p class="editable-field" contenteditable="true" data-path="${k}.infoS">${data[k].infoS}</p>
       </div>
       
       <div class="info-section">
         <strong><i class="fas fa-times-circle" style="color:#d32f2f"></i> Confirmados</strong>
-        <p>${data[k].infoC}</p>
-        <button class="edit-btn" onclick="openEdit('${k}.infoC','Editar: Confirmados — ${label}')"><i class="fas fa-edit"></i> Editar</button>
+        <p class="editable-field" contenteditable="true" data-path="${k}.infoC">${data[k].infoC}</p>
       </div>
       
       <div class="info-section">
         <strong><i class="fas fa-info-circle" style="color:#6B4C9A"></i> Detalhamento</strong>
-        <p>${data[k].det}</p>
-        <button class="edit-btn" onclick="openEdit('${k}.det','Editar: Detalhamento — ${label}')"><i class="fas fa-edit"></i> Editar</button>
+        <p class="editable-field" contenteditable="true" data-path="${k}.det">${data[k].det}</p>
       </div>
     </div>`;
   }
   document.getElementById('infoGrid').innerHTML=infoHTML;
 
-  document.getElementById('measuresText').innerHTML=data.medidas.split('•').map(t=>t.trim()).filter(t=>t).map(t=>'<span style="display:block;margin-bottom:8px">• '+t+'</span>').join('');
+  document.getElementById('measuresText').innerText=data.medidas;
   document.getElementById('observationsText').innerText=data.obs;
+
+  // Add event listeners to editable fields
+  setTimeout(()=>{
+    document.querySelectorAll('.editable-field[contenteditable="true"]').forEach(el=>{
+      el.addEventListener('blur',()=>{
+        const path=el.getAttribute('data-path');
+        const value=el.innerText.trim();
+        if(path && value){
+          setv(path,value);
+          localStorage.setItem('boletimV7Pro',JSON.stringify(data));
+        }
+      });
+    });
+  },100);
 
   localStorage.setItem('boletimV7Pro',JSON.stringify(data));
 }

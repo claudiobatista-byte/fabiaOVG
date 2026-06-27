@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Óbitos — CISF</title>
+    <style>
+        :root {
+            --rosa: #D94A9E;
+            --roxo: #6B4C9A;
+            --amarelo: #F0C944;
+            --azul-escuro: #2C3E50;
+            --cinza-claro: #F8FAFB;
+            --cinza-border: #E8EAED;
+            --branco: #FFFFFF;
+            --vermelho: #DC2626;
+            --verde: #16A34A;
+            --shadow-soft: 0 2px 12px rgba(0,0,0,0.08);
+            --shadow-medium: 0 8px 24px rgba(0,0,0,0.12);
+            --shadow-strong: 0 12px 32px rgba(217,74,158,0.25);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            overflow-x: hidden;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, #F8FAFB 0%, #FFFFFF 100%);
+            color: var(--azul-escuro);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* ========== MAIN ========== */
+        main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2.5rem 2rem;
+        }
+
+        /* ========== HERO ========== */
+        .hero {
+            background: linear-gradient(135deg, var(--roxo) 0%, var(--rosa) 50%, var(--roxo) 100%);
+            color: var(--branco);
+            padding: 3rem 2.5rem;
+            border-radius: 12px;
+            margin-bottom: 2.5rem;
+            box-shadow: var(--shadow-medium);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(240,201,68,0.18) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-tag {
+            display: inline-block;
+            background: rgba(240,201,68,0.2);
+            color: var(--amarelo);
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 1px solid rgba(240,201,68,0.4);
+            margin-bottom: 1.25rem;
+            text-transform: uppercase;
+        }
+
+        .hero h1 {
+            font-size: 2.4rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            letter-spacing: -1px;
+            position: relative;
+        }
+
+        .hero .subtitle {
+            font-size: 1.05rem;
+            opacity: 0.95;
+            max-width: 720px;
+            line-height: 1.7;
+            position: relative;
+        }
+
+        /* ========== ACTION BAR ========== */
+        .action-bar {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: stretch;
+            margin-bottom: 2rem;
+        }
+
+        .action-card {
+            flex: 1;
+            min-width: 280px;
+            background: var(--branco);
+            border: 2px solid var(--cinza-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-soft);
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            transition: var(--transition);
+        }
+
+        .action-card.primary {
+            background: linear-gradient(135deg, var(--rosa), var(--roxo));
+            color: var(--branco);
+            border-color: transparent;
+            box-shadow: var(--shadow-strong);
+        }
+
+        .action-card.primary:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 40px rgba(217,74,158,0.35);
+        }
+
+        .action-card.secondary:hover {
+            border-color: var(--rosa);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .action-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            flex-shrink: 0;
+        }
+
+        .action-card.primary .action-icon {
+            background: rgba(255,255,255,0.2);
+            color: var(--amarelo);
+        }
+
+        .action-card.secondary .action-icon {
+            background: linear-gradient(135deg, rgba(217,74,158,0.15), rgba(107,76,154,0.15));
+            color: var(--rosa);
+        }
+
+        .action-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .action-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .action-card.secondary .action-title {
+            color: var(--roxo);
+        }
+
+        .action-desc {
+            font-size: 0.85rem;
+            opacity: 0.85;
+            line-height: 1.4;
+        }
+
+        .action-card.secondary .action-desc {
+            color: #666;
+        }
+
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            background: var(--amarelo);
+            color: var(--azul-escuro);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            white-space: nowrap;
+            border: none;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .action-btn:hover {
+            background: var(--branco);
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .action-btn-secondary {
+            background: transparent;
+            color: var(--rosa);
+            border: 2px solid var(--rosa);
+        }
+
+        .action-btn-secondary:hover {
+            background: var(--rosa);
+            color: var(--branco);
+        }
+
+        /* ========== DASHBOARD SECTION ========== */
+        .dashboard-section {
+            background: var(--branco);
+            border-radius: 12px;
+            box-shadow: var(--shadow-medium);
+            overflow: hidden;
+            margin-bottom: 2rem;
+            border: 1px solid var(--cinza-border);
+        }
+
+        .dashboard-header {
+            background: linear-gradient(135deg, rgba(217,74,158,0.06), rgba(107,76,154,0.06));
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--cinza-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .dashboard-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .dashboard-title-icon {
+            font-size: 1.5rem;
+        }
+
+        .dashboard-title h2 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--roxo);
+            margin: 0;
+        }
+
+        .dashboard-title p {
+            font-size: 0.85rem;
+            color: #666;
+            margin: 0;
+        }
+
+        .dashboard-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(22,163,74,0.1);
+            color: var(--verde);
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(22,163,74,0.3);
+        }
+
+        .dashboard-badge::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: var(--verde);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .dashboard-iframe-wrapper {
+            position: relative;
+            width: 100%;
+            background: var(--cinza-claro);
+        }
+
+        .dashboard-iframe {
+            display: block;
+            width: 100%;
+            height: 1100px;
+            border: none;
+            background: var(--branco);
+        }
+
+        .dashboard-footer {
+            padding: 1rem 2rem;
+            background: var(--cinza-claro);
+            border-top: 1px solid var(--cinza-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .dashboard-footer a {
+            color: var(--rosa);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .dashboard-footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* ========== INFO BOX ========== */
+        .info-box {
+            background: linear-gradient(135deg, rgba(217,74,158,0.08), rgba(240,201,68,0.08));
+            border: 2px solid rgba(217,74,158,0.25);
+            border-left: 4px solid var(--rosa);
+            padding: 1.5rem 1.75rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .info-box-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+            line-height: 1;
+        }
+
+        .info-box-content h3 {
+            color: var(--roxo);
+            font-size: 1rem;
+            margin-bottom: 0.4rem;
+        }
+
+        .info-box-content p {
+            font-size: 0.9rem;
+            color: #444;
+            line-height: 1.6;
+        }
+
+        /* ========== FOOTER ========== */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: #999;
+            font-size: 0.85rem;
+            border-top: 1px solid var(--cinza-border);
+            margin-top: 2rem;
+        }
+
+        footer strong {
+            color: var(--roxo);
+        }
+
+        footer .footer-accent {
+            color: var(--rosa);
+        }
+
+        /* ========== RESPONSIVO ========== */
+        @media (max-width: 1024px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .dashboard-iframe {
+                height: 950px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            main {
+                padding: 1.5rem 1rem;
+            }
+
+            .hero {
+                padding: 2rem 1.5rem;
+            }
+
+            .hero h1 {
+                font-size: 1.6rem;
+            }
+
+            .hero .subtitle {
+                font-size: 0.95rem;
+            }
+
+            .action-card {
+                flex-direction: column;
+                text-align: center;
+                min-width: 100%;
+            }
+
+            .action-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .dashboard-header {
+                padding: 1.25rem;
+            }
+
+            .dashboard-title h2 {
+                font-size: 1.1rem;
+            }
+
+            .dashboard-iframe {
+                height: 800px;
+            }
+
+            .dashboard-footer {
+                padding: 1rem;
+                font-size: 0.75rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 1.35rem;
+            }
+
+            .hero-tag {
+                font-size: 0.65rem;
+            }
+
+            .dashboard-iframe {
+                height: 700px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ========== MAIN ========== -->
+    <main>
+
+        <!-- HERO -->
+        <section class="hero">
+            <span class="hero-tag">📋 Registro Vital</span>
+            <h1>Controle de Óbitos — CISF</h1>
+            <p class="subtitle">
+                Sistema integrado de registro, acompanhamento e análise de óbitos do
+                Centro de Idosos Sagrada Família. Os dados alimentam, em tempo real,
+                o dashboard analítico abaixo e subsidiam relatórios epidemiológicos,
+                planejamento sanitário e tomada de decisão clínica.
+            </p>
+        </section>
+
+        <!-- AÇÕES PRINCIPAIS -->
+        <section class="action-bar">
+
+            <div class="action-card primary">
+                <div class="action-icon">➕</div>
+                <div class="action-content">
+                    <div class="action-title">Registrar Novo Óbito</div>
+                    <div class="action-desc">
+                        Preencha o formulário oficial para inclusão de novo registro no sistema.
+                    </div>
+                </div>
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLSdaJTPCuJIuy1C6tdETRdVMTX80oOp8P0KocLhxG1scOZhHqg/viewform"
+                   target="_blank" rel="noopener noreferrer"
+                   class="action-btn"
+                   aria-label="Abrir formulário de inserção de óbito em nova aba">
+                    Inserir Óbito →
+                </a>
+            </div>
+
+            <div class="action-card secondary">
+                <div class="action-icon">📊</div>
+                <div class="action-content">
+                    <div class="action-title">Dashboard Analítico</div>
+                    <div class="action-desc">
+                        Visualização interativa em tempo real dos registros consolidados.
+                    </div>
+                </div>
+                <a href="#dashboard" class="action-btn action-btn-secondary">
+                    Ver abaixo ↓
+                </a>
+            </div>
+
+        </section>
+
+        <!-- AVISO -->
+        <div class="info-box">
+            <div class="info-box-icon">🔒</div>
+            <div class="info-box-content">
+                <h3>Confidencialidade e LGPD</h3>
+                <p>
+                    Os dados registrados neste sistema são sigilosos e protegidos pela
+                    Lei Geral de Proteção de Dados (Lei 13.709/2018). O acesso é restrito
+                    a profissionais autorizados do CISF. As informações são utilizadas
+                    exclusivamente para fins de vigilância epidemiológica institucional
+                    e gestão do cuidado.
+                </p>
+            </div>
+        </div>
+
+        <!-- DASHBOARD -->
+        <section class="dashboard-section" id="dashboard">
+
+            <div class="dashboard-header">
+                <div class="dashboard-title">
+                    <div class="dashboard-title-icon">📊</div>
+                    <div>
+                        <h2>Dashboard de Óbitos — Looker Studio</h2>
+                        <p>Visualização interativa alimentada pelos registros do formulário</p>
+                    </div>
+                </div>
+                <div class="dashboard-badge">Atualização contínua</div>
+            </div>
+
+            <div class="dashboard-iframe-wrapper">
+                <iframe
+                    class="dashboard-iframe"
+                    src="https://datastudio.google.com/embed/reporting/91729e75-4e6d-4c89-a1d7-73dcb9a69ec8/page/RPT2F"
+                    title="Dashboard de Controle de Óbitos CISF — Looker Studio"
+                    frameborder="0"
+                    allowfullscreen
+                    sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox">
+                </iframe>
+            </div>
+
+            <div class="dashboard-footer">
+                <span>
+                    🔄 Dados sincronizados automaticamente com o formulário de registro
+                </span>
+                <a href="https://datastudio.google.com/reporting/91729e75-4e6d-4c89-a1d7-73dcb9a69ec8/page/RPT2F"
+                   target="_blank" rel="noopener noreferrer">
+                    Abrir dashboard em tela cheia ↗
+                </a>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- ========== FOOTER ========== -->
+    <footer>
+        <p>
+            <strong>Centro de Idosos Sagrada Família</strong> •
+            <span class="footer-accent">Controle de Óbitos &amp; Vigilância Integrada</span>
+        </p>
+        <p style="margin-top: 0.5rem;">
+            Dados que protegem • Análise que dignifica • Cuidado que transforma
+        </p>
+    </footer>
+
+</body>
+</html>

@@ -24,6 +24,10 @@
             box-sizing: border-box;
         }
 
+        html, body {
+            overflow-x: hidden;
+        }
+
         html {
             scroll-behavior: smooth;
         }
@@ -393,11 +397,20 @@
 
         /* ========== IFRAME CONTAINER ========== */
         .iframe-container {
+            display: block;
             width: 100%;
+            height: calc(100vh - 77px); /* viewport menos altura real do header */
             border: none;
-            border-radius: 8px;
-            box-shadow: var(--shadow-soft);
-            min-height: calc(100vh - 200px);
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Tabs com iframe ocupam exatamente a área restante (sem rolagem da página pai) */
+        #analise.active,
+        #painel.active,
+        #boletim.active {
+            display: block;
+            line-height: 0; /* elimina gap fantasma de inline-block do iframe */
         }
 
         /* ========== RESPONSIVO ========== */
@@ -432,6 +445,10 @@
             .cards-grid {
                 grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
                 gap: 1.5rem;
+            }
+
+            .iframe-container {
+                height: calc(100vh - 95px);
             }
         }
 
@@ -483,6 +500,10 @@
                 font-size: 1.3rem;
                 margin-bottom: 1.5rem;
             }
+
+            .iframe-container {
+                height: calc(100vh - 145px); /* header em coluna ocupa mais espaço */
+            }
         }
 
         @media (max-width: 480px) {
@@ -513,6 +534,10 @@
             .card-title {
                 font-size: 1.1rem;
             }
+
+            .iframe-container {
+                height: calc(100vh - 135px);
+            }
         }
     </style>
 </head>
@@ -530,6 +555,7 @@
             <button class="tab-btn" data-tab="analise">Análise Epidemiológica</button>
             <button class="tab-btn" data-tab="painel">Painel de Monitoramento</button>
             <button class="tab-btn" data-tab="boletim">Boletim Epidemiológico</button>
+            <button class="tab-btn" data-tab="obitos">Controle de Óbitos</button>
         </div>
     </header>
 
@@ -611,6 +637,21 @@
                         <div class="card-meta">
                             <span class="meta-item">📢 Periódico</span>
                             <span class="meta-item">🛡️ Prevenção</span>
+                        </div>
+                        <button class="card-btn">Acessar →</button>
+                    </div>
+
+                    <!-- CARD 4: CONTROLE DE ÓBITOS -->
+                    <div class="card" onclick="showTab('obitos')">
+                        <div class="card-icon">📋</div>
+                        <h3 class="card-title">Controle de Óbitos</h3>
+                        <p class="card-desc">
+                            Sistema de registro vital com formulário oficial para inserção de novos óbitos
+                            e dashboard analítico em tempo real integrado ao Looker Studio.
+                        </p>
+                        <div class="card-meta">
+                            <span class="meta-item">➕ Registro</span>
+                            <span class="meta-item">📊 Dashboard</span>
                         </div>
                         <button class="card-btn">Acessar →</button>
                     </div>
@@ -748,6 +789,11 @@
         <!-- ========== TAB: BOLETIM EPIDEMIOLÓGICO ========== -->
         <div id="boletim" class="tab-content">
             <iframe src="boletim.html" class="iframe-container" title="Boletim Epidemiológico"></iframe>
+        </div>
+
+        <!-- ========== TAB: CONTROLE DE ÓBITOS ========== -->
+        <div id="obitos" class="tab-content">
+            <iframe src="obitos.html" class="iframe-container" title="Controle de Óbitos"></iframe>
         </div>
 
     </div>
